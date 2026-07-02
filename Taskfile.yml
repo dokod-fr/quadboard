@@ -5,6 +5,15 @@ vars:
   CMD_DIR: ./cmd/quadboard
   BIN_DIR: ./bin
 
+  VERSION:
+    sh: git describe --tags --always --dirty 2>/dev/null || echo dev
+
+  COMMIT:
+    sh: git rev-parse --short HEAD 2>/dev/null || echo unknown
+
+  DATE:
+    sh: date -u +"%Y-%m-%dT%H:%M:%SZ"
+
 tasks:
   default:
     desc: Show available tasks
@@ -12,10 +21,24 @@ tasks:
       - task --list
 
   build:
-    desc: Build the application
+    desc: Build QuadBoard
     cmds:
       - mkdir -p {{.BIN_DIR}}
-      - go build -o {{.BIN_DIR}}/{{.APP_NAME}} {{.CMD_DIR}}
+      - >
+        go build
+        -ldflags="
+        -X github.com/dokod-fr/quadboard/internal/build.Version={{.VERSION}}
+        -X github.com/dokod-fr/quadboard/internal/build.Commit={{.COMMIT}}
+        -X github.com/dokod-fr/quadboard/internal/build.Date={{.DATE}}
+        "
+        -o {{.BIN_DIR}}/{{.APP_NAME}}
+        {{.CMD_DIR}}
+
+  release:
+    desc: Build release binary
+    cmds:
+      - task: clean
+      - task: build
 
   run:
     desc: Run the application
