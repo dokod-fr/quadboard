@@ -24,7 +24,7 @@
             templ
             air
             go-task # Task runner for Go
-
+            cobra-cli # subcommand generator for Go applications
             git
 
             nil

@@ -1,4 +1,4 @@
-package build
+package version
 
 var (
 	Version = "dev"

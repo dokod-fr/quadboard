@@ -27,9 +27,9 @@ tasks:
       - >
         go build
         -ldflags="
-        -X github.com/dokod-fr/quadboard/internal/build.Version={{.VERSION}}
-        -X github.com/dokod-fr/quadboard/internal/build.Commit={{.COMMIT}}
-        -X github.com/dokod-fr/quadboard/internal/build.Date={{.DATE}}
+        -X github.com/dokod-fr/quadboard/internal/version.Version={{.VERSION}}
+        -X github.com/dokod-fr/quadboard/internal/version.Commit={{.COMMIT}}
+        -X github.com/dokod-fr/quadboard/internal/version.Date={{.DATE}}
         "
         -o {{.BIN_DIR}}/{{.APP_NAME}}
         {{.CMD_DIR}}
