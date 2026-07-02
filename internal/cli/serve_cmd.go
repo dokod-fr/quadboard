@@ -1,17 +1,25 @@
-package cmd
+package cli
 
 import (
-	"fmt"
+	"context"
 
+	"github.com/dokod-fr/quadboard/internal/config"
+	httpserver "github.com/dokod-fr/quadboard/internal/http"
 	"github.com/spf13/cobra"
 )
 
 var serveCmd = &cobra.Command{
 	Use:   "serve",
-	Short: "Start the QuadBoard server",
+	Short: "Start HTTP server",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		fmt.Println("Starting QuadBoard...")
-		return nil
+		cfg, err := config.Load()
+		if err != nil {
+			return err
+		}
+
+		srv := httpserver.New(cfg)
+
+		return srv.Start(context.Background())
 	},
 }
 

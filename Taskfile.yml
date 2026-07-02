@@ -45,7 +45,7 @@ tasks:
     deps:
       - build
     cmds:
-      - ./{{.BIN_DIR}}/{{.APP_NAME}}
+      - ./{{.BIN_DIR}}/{{.APP_NAME}} serve
 
   test:
     desc: Run unit tests
@@ -79,3 +79,7 @@ tasks:
       - fmt
       - lint
       - test
+
+  dev:
+    cmds:
+      - go run ./cmd/quadboard serve

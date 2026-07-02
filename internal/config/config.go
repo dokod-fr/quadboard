@@ -7,7 +7,9 @@ type Config struct {
 }
 
 type ServerConfig struct {
-	Address string
+	Address      string
+	ReadTimeout  int
+	WriteTimeout int
 }
 
 type LoggingConfig struct {
