@@ -3,14 +3,19 @@ package handlers
 import (
 	"net/http"
 
-	"github.com/dokod-fr/quadboard/internal/config"
-	"github.com/dokod-fr/quadboard/internal/http/views"
+	"github.com/dokod-fr/quadboard/internal/domain"
+	"github.com/dokod-fr/quadboard/internal/http/views/pages"
+	"github.com/dokod-fr/quadboard/internal/mock"
 )
 
-func Home(cfg config.Config) http.HandlerFunc {
+func Home() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "text/html")
+		resources := []domain.Resource{
+			mock.Grafana(),
+		}
 
-		views.Home(cfg).Render(r.Context(), w)
+		if err := pages.Home(resources).Render(r.Context(), w); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
 	}
 }

@@ -15,7 +15,12 @@ func NewRouter(cfg config.Config) http.Handler {
 	r.Get("/version", handlers.Version)
 
 	// UI
-	r.Get("/", handlers.Home(cfg))
+	r.Get("/", handlers.Home())
+
+	// Serve assets
+	assets := http.FileServer(http.Dir("web/assets"))
+
+	r.Handle("/assets/*", http.StripPrefix("/assets/", assets))
 
 	return r
 }

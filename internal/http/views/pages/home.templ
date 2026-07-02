@@ -1,0 +1,28 @@
+package pages
+
+import (
+    "github.com/dokod-fr/quadboard/internal/domain"
+
+    "github.com/dokod-fr/quadboard/internal/http/views/components"
+    "github.com/dokod-fr/quadboard/internal/http/views/layouts"
+)
+
+templ Home(resources []domain.Resource) {
+
+    @layouts.App("Dashboard") {
+
+        <section>
+
+            <h2>Resources</h2>
+
+            for _, r := range resources {
+
+                @components.ResourceCard(r)
+
+            }
+
+        </section>
+
+    }
+
+}

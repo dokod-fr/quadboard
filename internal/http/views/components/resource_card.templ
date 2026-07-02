@@ -1,0 +1,27 @@
+package components
+
+import "github.com/dokod-fr/quadboard/internal/domain"
+
+templ ResourceCard(r domain.Resource) {
+
+    <article class="resource-card">
+
+        <header>
+
+            <h2>{ r.Name }</h2>
+
+            <span>{ string(r.Health) }</span>
+
+        </header>
+
+        <p>{ r.Description }</p>
+
+        if len(r.Actions) > 0 {
+            <a href={ r.Actions[0].URL }>
+                { r.Actions[0].Label }
+            </a>
+        }
+
+    </article>
+
+}

@@ -45,13 +45,31 @@ QuadBoard follows a few simple principles:
 
 ## Roadmap
 
-- [ ] HTTP server
-- [ ] Quadlet provider
-- [ ] HTML renderer
-- [ ] Theme engine
-- [ ] Traefik integration
-- [ ] Authelia integration
-- [ ] REST API
+v0.1.0
+
+✓ CLI
+✓ Config
+✓ HTTP
+✓ Dashboard
+✓ Resource model
+□ Quadlet provider
+□ Traefik provider
+□ Groups
+□ Authelia Openid Connect
+□ Theme engine
+
+v0.2.0
+
+□ Static provider
+□ Search
+□ Tags
+□ User preferences
+
+v0.3.0
+
+□ Authentication hooks
+□ Plugins
+□ API
 
 ## License
 
