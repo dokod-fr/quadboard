@@ -27,6 +27,9 @@ bin/
 dist/
 coverage.out
 
+# Go - templates
+*_templ.go
+
 # Nix
 result
 

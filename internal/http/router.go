@@ -14,5 +14,8 @@ func NewRouter(cfg config.Config) http.Handler {
 	r.Get("/health", handlers.Health)
 	r.Get("/version", handlers.Version)
 
+	// UI
+	r.Get("/", handlers.Home(cfg))
+
 	return r
 }

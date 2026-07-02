@@ -1,0 +1,18 @@
+package views
+
+import "github.com/dokod-fr/quadboard/internal/config"
+
+templ Home(cfg config.Config) {
+	@Layout() {
+		<div>
+			<h2>Dashboard</h2>
+
+			<p>Server: { cfg.Server.Address }</p>
+			<p>Theme: { cfg.Theme.Name }</p>
+
+			<hr/>
+
+			<p>No applications discovered yet.</p>
+		</div>
+	}
+}

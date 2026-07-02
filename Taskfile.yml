@@ -23,6 +23,7 @@ tasks:
   build:
     desc: Build QuadBoard
     cmds:
+      - templ generate ./...
       - mkdir -p {{.BIN_DIR}}
       - >
         go build
@@ -69,9 +70,9 @@ tasks:
       - go mod tidy
 
   clean:
-    desc: Remove build artifacts
     cmds:
-      - rm -rf {{.BIN_DIR}}
+      - rm -rf bin
+      - find . -name "*_templ.go" -delete
 
   check:
     desc: Run all verification tasks
@@ -82,4 +83,5 @@ tasks:
 
   dev:
     cmds:
+      - templ generate ./...
       - go run ./cmd/quadboard serve
