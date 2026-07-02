@@ -55,4 +55,4 @@ QuadBoard follows a few simple principles:
 
 ## License
 
-[MIT](LICENSE.md)
+[GPLv3](LICENSE.md)
