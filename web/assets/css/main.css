@@ -1,20 +1,61 @@
+:root {
+    --background: #f6f8fb;
+    --surface: #ffffff;
+
+    --border: #e5e7eb;
+
+    --text: #111827;
+    --text-muted: #6b7280;
+
+    --primary: #2563eb;
+
+    --radius: 12px;
+
+    --shadow:
+        0 1px 2px rgba(0,0,0,.04),
+        0 6px 18px rgba(0,0,0,.05);
+}
+
+body {
+    margin: 0;
+    background: var(--background);
+    color: var(--text);
+
+    font-family:
+        Inter,
+        system-ui,
+        sans-serif;
+}
+
+main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+header.site-header {
+    background: white;
+    border-bottom: 1px solid var(--border);
+    padding: 1rem 2rem;
+}
+
 .resource-card {
-    border: 1px solid #dcdcdc;
-    border-radius: .5rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
     padding: 1rem;
-    max-width: 320px;
+    box-shadow: var(--shadow);
 }
 
-.resource-card__header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+.resources-grid {
+    display: grid;
+    grid-template-columns:
+        repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
 }
 
-.resource-card__description {
-    color: #666;
-}
-
-.resource-card__footer {
-    margin-top: 1rem;
+.badge {
+    padding: .2rem .6rem;
+    border-radius: 999px;
+    font-size: .75rem;
 }

@@ -5,6 +5,7 @@ import (
 
 	"github.com/dokod-fr/quadboard/internal/config"
 	"github.com/dokod-fr/quadboard/internal/http/handlers"
+	"github.com/dokod-fr/quadboard/web"
 	"github.com/go-chi/chi/v5"
 )
 
@@ -17,10 +18,13 @@ func NewRouter(cfg config.Config) http.Handler {
 	// UI
 	r.Get("/", handlers.Home())
 
-	// Serve assets
-	assets := http.FileServer(http.Dir("web/assets"))
-
-	r.Handle("/assets/*", http.StripPrefix("/assets/", assets))
-
+	// Manage assets
+	r.Handle(
+		"/assets/*",
+		http.StripPrefix(
+			"/assets/",
+			http.FileServer(http.FS(web.FS())),
+		),
+	)
 	return r
 }
