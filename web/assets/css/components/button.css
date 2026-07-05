@@ -1,0 +1,11 @@
+.button {
+
+    color: var(--color-primary);
+    font-weight: 600;
+    transition: color .15s ease;
+}
+
+.button:hover {
+
+    color: #155cc9;
+}

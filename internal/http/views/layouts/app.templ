@@ -1,27 +1,34 @@
 package layouts
 
-templ App(title string) {
-    <!DOCTYPE html>
-    <html lang="en">
-        <head>
-            <meta charset="utf-8"/>
-            <meta name="viewport" content="width=device-width, initial-scale=1"/>
+templ Layout() {
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-            <title>{ title }</title>
+    <title>QuadBoard</title>
 
-            <link rel="stylesheet" href="/assets/css/main.css"/>
-        </head>
+    <link rel="stylesheet" href="/assets/css/main.css">
+</head>
 
-        <body>
+<body>
 
-            <header>
-                <h1>QuadBoard</h1>
-            </header>
+<header class="site-header">
+    <div class="site-brand">
+        <img src="/assets/img/logo.svg" alt="QuadBoard">
 
-            <main>
-                { children... }
-            </main>
+        <div>
+            <h1>QuadBoard</h1>
+            <p>Your infrastructure at a glance</p>
+        </div>
+    </div>
+</header>
 
-        </body>
-    </html>
+<main>
+    { children... }
+</main>
+
+</body>
+</html>
 }

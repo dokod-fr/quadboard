@@ -2,27 +2,29 @@ package pages
 
 import (
     "github.com/dokod-fr/quadboard/internal/domain"
-
     "github.com/dokod-fr/quadboard/internal/http/views/components"
     "github.com/dokod-fr/quadboard/internal/http/views/layouts"
 )
 
 templ Home(resources []domain.Resource) {
+    @layouts.Layout() {
 
-    @layouts.App("Dashboard") {
+        <section class="dashboard">
 
-        <section>
+            <header class="dashboard-header">
+                <div>
+                    <h2>Dashboard</h2>
+                    <p>Your self-hosted services at a glance.</p>
+                </div>
+            </header>
 
-            <h2>Resources</h2>
-
-            for _, r := range resources {
-
-                @components.ResourceCard(r)
-
-            }
+            <div class="resources-grid">
+                for _, resource := range resources {
+                    @components.ResourceCard(resource)
+                }
+            </div>
 
         </section>
 
     }
-
 }
