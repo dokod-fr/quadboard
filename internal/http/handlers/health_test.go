@@ -10,7 +10,7 @@ func TestHealth(t *testing.T) {
 	req := httptest.NewRequest(http.MethodGet, "/health", nil)
 	w := httptest.NewRecorder()
 
-	Health(w, req)
+	ServeHealth(w, req)
 
 	res := w.Result()
 

@@ -7,7 +7,7 @@ import (
 	"github.com/dokod-fr/quadboard/internal/version"
 )
 
-func Version(w http.ResponseWriter, r *http.Request) {
+func ServeVersion(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	_ = json.NewEncoder(w).Encode(map[string]string{

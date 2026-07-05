@@ -12,6 +12,7 @@ func main() {
 }
 
 func run() int {
+
 	if err := cli.Execute(); err != nil {
 		slog.Error("command failed", "error", err)
 		return 1

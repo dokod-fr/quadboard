@@ -3,20 +3,20 @@ package http
 import (
 	"net/http"
 
-	"github.com/dokod-fr/quadboard/internal/config"
+	"github.com/dokod-fr/quadboard/internal/app"
 	"github.com/dokod-fr/quadboard/internal/http/handlers"
 	"github.com/dokod-fr/quadboard/web"
 	"github.com/go-chi/chi/v5"
 )
 
-func NewRouter(cfg config.Config) http.Handler {
+func NewRouter(discovery *app.Discovery) http.Handler {
 	r := chi.NewRouter()
 
-	r.Get("/health", handlers.Health)
-	r.Get("/version", handlers.Version)
+	r.Get("/health", handlers.ServeHealth)
+	r.Get("/version", handlers.ServeVersion)
 
 	// UI
-	r.Get("/", handlers.Home())
+	r.Get("/", handlers.NewHomeHandler(discovery).Serve)
 
 	// Manage assets
 	r.Handle(

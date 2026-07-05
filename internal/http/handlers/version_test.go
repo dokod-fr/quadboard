@@ -10,7 +10,7 @@ func TestVersion(t *testing.T) {
 	req := httptest.NewRequest(http.MethodGet, "/version", nil)
 	w := httptest.NewRecorder()
 
-	Version(w, req)
+	ServeVersion(w, req)
 
 	res := w.Result()
 
