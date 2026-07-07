@@ -4,7 +4,7 @@ import (
 	"github.com/dokod-fr/quadboard/internal/app"
 	"github.com/dokod-fr/quadboard/internal/config"
 	"github.com/dokod-fr/quadboard/internal/http"
-	"github.com/dokod-fr/quadboard/internal/mock"
+	"github.com/dokod-fr/quadboard/internal/providers/quadlet"
 	"github.com/spf13/cobra"
 )
 
@@ -18,7 +18,7 @@ var serveCmd = &cobra.Command{
 		}
 
 		discovery := app.NewDiscovery(
-			mock.New(),
+			quadlet.New("internal/providers/quadlet/testdata"),
 		)
 
 		router := http.NewRouter(discovery)

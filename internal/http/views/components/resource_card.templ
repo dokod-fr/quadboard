@@ -20,9 +20,13 @@ templ ResourceCard(r domain.Resource) {
     <div class="resource-card-footer">
         <span></span>
 
+if len(r.Actions) > 0 {
         <a class="button" href={ r.Actions[0].URL }>
             Open ↗
         </a>
+} else {
+    <span class="btn disabled">Unavailable</span>
+}
     </div>
 
 </div>

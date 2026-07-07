@@ -49,9 +49,21 @@ tasks:
       - ./{{.BIN_DIR}}/{{.APP_NAME}} serve
 
   test:
-    desc: Run unit tests
+    desc: Run all unit tests
     cmds:
       - go test ./...
+
+  coverage:
+    desc: Run unit tests and display code coverage
+    cmds:
+      - go test -coverprofile=coverage.out ./...
+      - go tool cover -func=coverage.out
+
+  coverage-html:
+    desc: Generate an HTML code coverage report
+    cmds:
+      - go test -coverprofile=coverage.out ./...
+      - go tool cover -html=coverage.out
 
   fmt:
     desc: Format Go source files

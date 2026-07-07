@@ -3,10 +3,10 @@ package app
 import "github.com/dokod-fr/quadboard/internal/domain"
 
 type Discovery struct {
-	providers []Provider
+	providers []domain.Provider
 }
 
-func NewDiscovery(providers ...Provider) *Discovery {
+func NewDiscovery(providers ...domain.Provider) *Discovery {
 	return &Discovery{
 		providers: providers,
 	}

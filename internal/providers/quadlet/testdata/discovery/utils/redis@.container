@@ -1,0 +1,21 @@
+###
+### nextcloud-redis - podman quadlet file
+### https://docs.podman.io/en/latest/markdown/podman-systemd.unit.5.html
+###
+
+[Unit]
+Description=Redis for Nextcloud
+
+[Service]
+Restart=on-failure
+
+[Container]
+Image=docker.io/library/redis:8.8.0-alpine
+ContainerName=%i-redis
+
+# TODO: Secure redis isn't simple in Quadlets. Find how to do?
+# redis-server --requirepass "$(cat /run/secrets/%i-redis-password)"
+# Secret=%i-redis-password,type=mount,uid=1001
+
+[Install]
+WantedBy=default.target

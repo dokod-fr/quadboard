@@ -1,0 +1,34 @@
+###
+### nextcloud-nginx - podman quadlet file
+### https://docs.podman.io/en/latest/markdown/podman-systemd.unit.5.html
+###
+
+[Unit]
+Description=Nginx for Nextcloud (Reverse proxy to PHP-FPM)
+Documentation=https://hub.docker.com/nginx
+# likely only needed for Podman < 5.3 (see containers/podman#22197 and #24637)
+After=podman-user-wait-network-online.service
+
+[Service]
+Restart=on-failure
+
+[Container]
+Image=docker.io/library/nginx:1.31.1-alpine
+ContainerName=nextcloud-nginx
+Pod=nextcloud.pod
+
+# Mount volume with config files
+Volume=%h/containers-config/volumes/nextcloud/nginx/conf.d:/etc/nginx/conf.d:Z
+# Mount static Nextcloud files if needed (optional)
+Volume=nextcloud-data.volume:/var/www/html:Z
+Volume=%h/containers-config/volumes/nextcloud/nginx/hook.d/99-nextcloud-opts.sh:/docker-entrypoint.d/99-nextcloud-opts.sh
+
+# if using traefik, automatically configure to proxy the web service
+Label=traefik.enable=true
+Label=traefik.http.routers.nextcloud.tls.certresolver=tlschallenge
+Label=traefik.http.services.nextcloud.loadbalancer.server.port=80
+
+ExposeHostPort=80
+
+[Install]
+WantedBy=default.target

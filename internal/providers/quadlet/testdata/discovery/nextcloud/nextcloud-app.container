@@ -1,0 +1,37 @@
+###
+### NextCloud - podman quadlet file
+### https://docs.podman.io/en/latest/markdown/podman-systemd.unit.5.html
+###
+
+[Unit]
+Description=Next Cloud
+Documentation=https://nextcloud.com/fr/
+Requires=nextcloud-nginx.service postgres@nextcloud.service redis@nextcloud.service
+
+[Service]
+Restart=on-failure
+
+[Container]
+ContainerName=nextcloud
+Image=docker.io/library/nextcloud:34.0.0-fpm-alpine
+Pod=nextcloud.pod
+
+# using multiple networks for traefik and db, not essential
+# Network=spider.network
+
+# environment variables
+Environment=TZ=Europe/Paris
+# -- DB 
+Environment=POSTGRES_PORT=5432
+Environment=POSTGRES_HOST=localhost
+Environment=POSTGRES_DB=nextcloud
+
+Volume=nextcloud-data.volume:/var/www/html
+Volume=%h/containers-config/volumes/nextcloud/hook.d:/docker-entrypoint-hooks.d
+
+# secrets
+# file based secrets
+Secret=nextcloud-admin-password,type=mount,uid=1001
+
+[Install]
+WantedBy=default.target
