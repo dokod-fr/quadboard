@@ -18,7 +18,7 @@ var serveCmd = &cobra.Command{
 		}
 
 		discovery := app.NewDiscovery(
-			quadlet.New("internal/providers/quadlet/testdata"),
+			quadlet.New(cfg.Providers.Quadlet.Paths...),
 		)
 
 		router := http.NewRouter(discovery)
