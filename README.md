@@ -52,8 +52,8 @@ v0.1.0
 ✓ HTTP
 ✓ Dashboard
 ✓ Resource model
-□ Quadlet provider
-□ Traefik provider
+✓ Quadlet provider
+✓ Traefik provider
 □ Groups
 □ Authelia Openid Connect
 □ Theme engine

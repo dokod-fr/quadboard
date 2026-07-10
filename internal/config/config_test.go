@@ -7,7 +7,6 @@ import (
 )
 
 func TestLoad(t *testing.T) {
-	// Save and clean up environment variables
 	envKeys := []string{
 		"QUADBOARD_CONFIG_PATH",
 		"QUADBOARD_SERVER_ADDRESS",
@@ -23,9 +22,12 @@ func TestLoad(t *testing.T) {
 
 	t.Run("Default only", func(t *testing.T) {
 		os.Unsetenv("QUADBOARD_CONFIG_PATH")
-		cfg, err := Load()
+		cfg, path, err := Load()
 		if err != nil {
 			t.Fatalf("Load() unexpected error: %v", err)
+		}
+		if path != "" {
+			t.Errorf("Expected empty path, got: %s", path)
 		}
 
 		if cfg.Server.Address != "0.0.0.0:8080" {
@@ -34,8 +36,8 @@ func TestLoad(t *testing.T) {
 		if cfg.Logging.Level != "info" {
 			t.Errorf("Expected default level: info, got: %s", cfg.Logging.Level)
 		}
-		if len(cfg.Providers.Quadlet.Paths) != 0 {
-			t.Errorf("Expected default paths: empty, got: %v", cfg.Providers.Quadlet.Paths)
+		if len(cfg.Providers.Quadlet.Paths) != 2 {
+			t.Errorf("Expected 2 default paths, got: %v", cfg.Providers.Quadlet.Paths)
 		}
 	})
 
@@ -51,7 +53,7 @@ logging:
 providers:
   quadlet:
     paths:
-      - /etc/quadlet
+      - /custom/quadlet/path
 `)
 		if err := os.WriteFile(yamlPath, yamlContent, 0644); err != nil {
 			t.Fatalf("Failed to create test file: %v", err)
@@ -61,9 +63,12 @@ providers:
 		os.Unsetenv("QUADBOARD_SERVER_ADDRESS")
 		os.Unsetenv("QUADBOARD_LOGGING_LEVEL")
 
-		cfg, err := Load()
+		cfg, path, err := Load()
 		if err != nil {
 			t.Fatalf("Load() unexpected error: %v", err)
+		}
+		if path != yamlPath {
+			t.Errorf("Expected path %s, got: %s", yamlPath, path)
 		}
 
 		if cfg.Server.Address != "127.0.0.1:9090" {
@@ -72,7 +77,7 @@ providers:
 		if cfg.Logging.Level != "debug" {
 			t.Errorf("Expected YAML level: debug, got: %s", cfg.Logging.Level)
 		}
-		if len(cfg.Providers.Quadlet.Paths) != 1 || cfg.Providers.Quadlet.Paths[0] != "/etc/quadlet" {
+		if len(cfg.Providers.Quadlet.Paths) != 1 || cfg.Providers.Quadlet.Paths[0] != "/custom/quadlet/path" {
 			t.Errorf("Invalid YAML paths: %v", cfg.Providers.Quadlet.Paths)
 		}
 	})
@@ -97,7 +102,7 @@ providers:
 		os.Setenv("QUADBOARD_LOGGING_LEVEL", "error")
 		os.Setenv("QUADBOARD_QUADLET_PATHS", "/var/run/quadlet, /opt/quadlet")
 
-		cfg, err := Load()
+		cfg, _, err := Load()
 		if err != nil {
 			t.Fatalf("Load() unexpected error: %v", err)
 		}

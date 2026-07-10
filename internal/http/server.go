@@ -26,7 +26,7 @@ func NewServer(cfg config.Config, handler http.Handler) *Server {
 }
 
 func (s *Server) Run() error {
-	slog.Info("starting HTTP server", "addr", s.server.Addr)
+	slog.Info("Starting HTTP server", slog.String("address", s.server.Addr))
 
 	err := s.server.ListenAndServe()
 	if err != nil && !errors.Is(err, http.ErrServerClosed) {

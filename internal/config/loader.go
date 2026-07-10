@@ -3,6 +3,7 @@ package config
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 
@@ -11,23 +12,49 @@ import (
 
 // Load loads the configuration respecting the following priority:
 // Environment variables > YAML file > Default constants.
-func Load() (Config, error) {
+// It returns the Config, the path of the config file used (if any), and an error.
+func Load() (Config, string, error) {
 	cfg := defaultConfig()
 
-	if configPath := os.Getenv("QUADBOARD_CONFIG_PATH"); configPath != "" {
+	configPath := resolveConfigPath()
+	if configPath != "" {
 		data, err := os.ReadFile(configPath)
 		if err != nil {
-			return cfg, fmt.Errorf("failed to read configuration file: %w", err)
+			return cfg, configPath, fmt.Errorf("failed to read configuration file: %w", err)
 		}
 
 		if err := yaml.Unmarshal(data, &cfg); err != nil {
-			return cfg, fmt.Errorf("failed to parse YAML file: %w", err)
+			return cfg, configPath, fmt.Errorf("failed to parse YAML file: %w", err)
 		}
 	}
 
 	applyEnvVars(&cfg)
 
-	return cfg, nil
+	return cfg, configPath, nil
+}
+
+// resolveConfigPath determines which configuration file to use.
+// 1. Uses QUADBOARD_CONFIG_PATH if set.
+// 2. Looks for config.yaml next to the executable.
+// 3. Returns empty string if no file is found.
+func resolveConfigPath() string {
+	if path := os.Getenv("QUADBOARD_CONFIG_PATH"); path != "" {
+		return path
+	}
+
+	exePath, err := os.Executable()
+	if err != nil {
+		return ""
+	}
+
+	fmt.Println("Executable path:", exePath) // Debugging line
+
+	adjacentPath := filepath.Join(filepath.Dir(exePath), "config.yaml")
+	if _, err := os.Stat(adjacentPath); err == nil {
+		return adjacentPath
+	}
+
+	return ""
 }
 
 func applyEnvVars(cfg *Config) {
