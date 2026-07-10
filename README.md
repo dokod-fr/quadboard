@@ -45,31 +45,7 @@ QuadBoard follows a few simple principles:
 
 ## Roadmap
 
-v0.1.0
-
-✓ CLI
-✓ Config
-✓ HTTP
-✓ Dashboard
-✓ Resource model
-✓ Quadlet provider
-✓ Traefik provider
-□ Groups
-□ Authelia Openid Connect
-□ Theme engine
-
-v0.2.0
-
-□ Static provider
-□ Search
-□ Tags
-□ User preferences
-
-v0.3.0
-
-□ Authentication hooks
-□ Plugins
-□ API
+[Roadmap](docs/roadmap.md)
 
 ## License
 

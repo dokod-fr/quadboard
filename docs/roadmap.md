@@ -8,7 +8,7 @@
 ✅ Quadlet loader
 ✅ Quadlet parser
 ✅ Quadlet builder
-⏳ Configuration
+✅ Configuration
 
 # v 0.2.0 Identity
 
@@ -37,4 +37,6 @@
 ⏳ Multi-provider support
 ⏳ Docker provider
 ⏳ Provider configuration
+⏳ API
+⏳ Plugins
 
