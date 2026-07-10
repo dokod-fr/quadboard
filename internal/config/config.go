@@ -4,6 +4,7 @@ type Config struct {
 	Server    ServerConfig    `yaml:"server"`
 	Logging   LoggingConfig   `yaml:"logging"`
 	Providers ProvidersConfig `yaml:"providers"`
+	Auth      AuthConfig      `yaml:"auth"`
 }
 
 type ServerConfig struct {
@@ -23,4 +24,16 @@ type ProvidersConfig struct {
 
 type QuadletConfig struct {
 	Paths []string `yaml:"paths"`
+}
+
+type AuthConfig struct {
+	SecretKey string      `yaml:"secret_key"` // key to sign the session cookie HMAC
+	OIDC      *OIDCConfig `yaml:"oidc"`
+}
+
+type OIDCConfig struct {
+	Issuer       string `yaml:"issuer"`
+	ClientID     string `yaml:"client_id"`
+	ClientSecret string `yaml:"client_secret"`
+	RedirectURL  string `yaml:"redirect_url"`
 }

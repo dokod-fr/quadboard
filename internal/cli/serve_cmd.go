@@ -1,9 +1,12 @@
 package cli
 
 import (
+	"context"
+	"fmt"
 	"log/slog"
 
 	"github.com/dokod-fr/quadboard/internal/app"
+	"github.com/dokod-fr/quadboard/internal/auth"
 	"github.com/dokod-fr/quadboard/internal/config"
 	"github.com/dokod-fr/quadboard/internal/http"
 	"github.com/dokod-fr/quadboard/internal/logging"
@@ -47,7 +50,26 @@ func Run(cmd *cobra.Command, args []string) error {
 		quadlet.New(cfg.Providers.Quadlet.Paths...),
 	)
 
-	router := http.NewRouter(discovery)
+	// Initialisation conditionnelle de l'OIDC
+	var oidcInstance *auth.OIDC
+	if cfg.Auth.OIDC != nil && cfg.Auth.OIDC.Issuer != "" {
+		logger.Info("Initializing OIDC authentication", "issuer", cfg.Auth.OIDC.Issuer)
+		oidcInstance, err = auth.NewOIDC(
+			context.Background(),
+			cfg.Auth.OIDC.Issuer,
+			cfg.Auth.OIDC.ClientID,
+			cfg.Auth.OIDC.ClientSecret,
+			cfg.Auth.OIDC.RedirectURL,
+			cfg.Auth.SecretKey,
+		)
+		if err != nil {
+			return fmt.Errorf("failed to initialize OIDC: %w", err)
+		}
+	} else {
+		logger.Info("Authentication disabled. All resources will be visible.")
+	}
+
+	router := http.NewRouter(discovery, oidcInstance)
 
 	server := http.NewServer(cfg, router)
 

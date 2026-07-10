@@ -1,6 +1,7 @@
 package quadlet
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/dokod-fr/quadboard/internal/domain"
@@ -21,19 +22,23 @@ func TestBuild(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if len(resources) != 3 {
-		t.Fatalf("expected 3 resources, got %d", len(resources))
+	if len(resources) != 5 {
+		t.Fatalf("expected 5 resources, got %d", len(resources))
 	}
 
+	fmt.Println("Resources built:")
+	for _, resource := range resources {
+		fmt.Printf("- %s\n", resource.Name)
+	}
 	assertContainsResource(t, resources, "dozzle")
 	assertContainsResource(t, resources, "nextcloud")
-	assertContainsResource(t, resources, "proxy")
+	assertContainsResource(t, resources, "authelia")
+	assertContainsResource(t, resources, "lldap")
+	assertContainsResource(t, resources, "traefik")
 
+	assertNotContainsResource(t, resources, "proxy")
 	assertNotContainsResource(t, resources, "nextcloud-app")
 	assertNotContainsResource(t, resources, "nextcloud-nginx")
-	assertNotContainsResource(t, resources, "authelia")
-	assertNotContainsResource(t, resources, "lldap")
-	assertNotContainsResource(t, resources, "traefik")
 }
 
 func assertContainsResource(t *testing.T, resources []domain.Resource, name string) {

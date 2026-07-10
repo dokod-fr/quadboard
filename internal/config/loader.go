@@ -86,4 +86,30 @@ func applyEnvVars(cfg *Config) {
 		}
 		cfg.Providers.Quadlet.Paths = paths
 	}
+
+	if val, ok := os.LookupEnv("QUADBOARD_AUTH_SECRET_KEY"); ok {
+		cfg.Auth.SecretKey = val
+	}
+
+	// Initialize OIDCConfig pointer if any OIDC-related environment variable is set
+	if cfg.Auth.OIDC == nil {
+		if _, ok := os.LookupEnv("QUADBOARD_AUTH_OIDC_ISSUER"); ok {
+			cfg.Auth.OIDC = &OIDCConfig{}
+		}
+	}
+
+	if cfg.Auth.OIDC != nil {
+		if val, ok := os.LookupEnv("QUADBOARD_AUTH_OIDC_ISSUER"); ok {
+			cfg.Auth.OIDC.Issuer = val
+		}
+		if val, ok := os.LookupEnv("QUADBOARD_AUTH_OIDC_CLIENT_ID"); ok {
+			cfg.Auth.OIDC.ClientID = val
+		}
+		if val, ok := os.LookupEnv("QUADBOARD_AUTH_OIDC_CLIENT_SECRET"); ok {
+			cfg.Auth.OIDC.ClientSecret = val
+		}
+		if val, ok := os.LookupEnv("QUADBOARD_AUTH_OIDC_REDIRECT_URL"); ok {
+			cfg.Auth.OIDC.RedirectURL = val
+		}
+	}
 }

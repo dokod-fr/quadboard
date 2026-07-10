@@ -30,6 +30,12 @@ providers:
     paths:
       - /etc/containers/systemd/
       - /opt/quadboard/quadlets
+# Required if OIDC is enabled  
+oidc:
+  issuer: "https://auth.example.com"
+  client_id: "quadboard"
+  client_secret: "super-secret"
+  redirect_url: "https://quadboard.example.com/auth/callback"
 ```
 
 ## Environment Variables
@@ -60,3 +66,16 @@ All environment variables start with the QUADBOARD_ prefix.
   
 
 > Note: When using QUADBOARD_QUADLET_PATHS, it completely replaces the default paths and the YAML configuration paths.
+
+### Authentication Configuration
+
+| Variable                           | Description               | Default                |
+|------------------------------------|---------------------------|------------------------|	
+| QUADBOARD_AUTH_SECRET_KEY	         | Secret key used to sign the session cookie (HMAC).	| (Empty) |
+| QUADBOARD_AUTH_OIDC_ISSUER	       | The issuer URL of your OIDC provider (e.g., Authelia, Authentik). | (Empty - Auth disabled) |
+| QUADBOARD_AUTH_OIDC_CLIENT_ID	     | The Client ID configured in your OIDC provider.	| (Empty) |
+| QUADBOARD_AUTH_OIDC_CLIENT_SECRET	 | The Client Secret configured in your OIDC provider. |	(Empty) |
+| QUADBOARD_AUTH_OIDC_REDIRECT_URL	 | The callback URL QuadBoard will use (must match the OIDC provider config). |	(Empty) |
+
+
+> Note: If QUADBOARD_AUTH_OIDC_ISSUER is not set, authentication is completely disabled and all resources are visible.
