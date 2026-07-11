@@ -22,6 +22,7 @@ type OIDC struct {
 	oauth2Config *oauth2.Config
 	verifier     *oidc.IDTokenVerifier
 	secretKey    []byte
+	secure       bool
 }
 
 type Session struct {
@@ -29,7 +30,7 @@ type Session struct {
 	Groups   []string `json:"groups"`
 }
 
-func NewOIDC(ctx context.Context, issuer, clientID, clientSecret, redirectURL, secretKey string) (*OIDC, error) {
+func NewOIDC(ctx context.Context, issuer, clientID, clientSecret, redirectURL, secretKey string, secure bool) (*OIDC, error) {
 	provider, err := oidc.NewProvider(ctx, issuer)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create OIDC provider: %w", err)
@@ -50,6 +51,7 @@ func NewOIDC(ctx context.Context, issuer, clientID, clientSecret, redirectURL, s
 		oauth2Config: oauth2Config,
 		verifier:     verifier,
 		secretKey:    []byte(secretKey),
+		secure:       secure,
 	}, nil
 }
 

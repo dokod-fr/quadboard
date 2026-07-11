@@ -90,6 +90,11 @@ func applyEnvVars(cfg *Config) {
 	if val, ok := os.LookupEnv("QUADBOARD_AUTH_SECRET_KEY"); ok {
 		cfg.Auth.SecretKey = val
 	}
+	if val, ok := os.LookupEnv("QUADBOARD_AUTH_SECURE"); ok {
+		if secure, err := strconv.ParseBool(val); err == nil {
+			cfg.Auth.Secure = secure
+		}
+	}
 
 	// Initialize OIDCConfig pointer if any OIDC-related environment variable is set
 	if cfg.Auth.OIDC == nil {

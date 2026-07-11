@@ -29,5 +29,10 @@ func defaultConfig() Config {
 				Paths: quadletPaths,
 			},
 		},
+		Auth: AuthConfig{
+			SecretKey: "",
+			Secure:    true, // Default to true for security; can be overridden for testing purposes
+			OIDC:      nil,
+		},
 	}
 }

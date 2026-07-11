@@ -61,6 +61,7 @@ func Run(cmd *cobra.Command, args []string) error {
 			cfg.Auth.OIDC.ClientSecret,
 			cfg.Auth.OIDC.RedirectURL,
 			cfg.Auth.SecretKey,
+			cfg.Auth.Secure,
 		)
 		if err != nil {
 			return fmt.Errorf("failed to initialize OIDC: %w", err)

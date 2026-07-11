@@ -28,6 +28,7 @@ type QuadletConfig struct {
 
 type AuthConfig struct {
 	SecretKey string      `yaml:"secret_key"` // key to sign the session cookie HMAC
+	Secure    bool        `yaml:"secure"`     // Be careful when setting this to false, as it will allow cookies to be sent over HTTP
 	OIDC      *OIDCConfig `yaml:"oidc"`
 }
 

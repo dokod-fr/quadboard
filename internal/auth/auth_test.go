@@ -44,6 +44,7 @@ func TestNewOIDC(t *testing.T) {
 		"test-secret",
 		"http://localhost/callback",
 		"test-secret-key",
+		true,
 	)
 
 	if err != nil {

@@ -31,11 +31,14 @@ providers:
       - /etc/containers/systemd/
       - /opt/quadboard/quadlets
 # Required if OIDC is enabled  
-oidc:
-  issuer: "https://auth.example.com"
-  client_id: "quadboard"
-  client_secret: "super-secret"
-  redirect_url: "https://quadboard.example.com/auth/callback"
+auth:
+  secret_key: "your-strong-hmac-secret-key"
+  secure: true # Set to false for local HTTP testing
+  oidc:
+    issuer: "https://auth.example.com"
+    client_id: "quadboard"
+    client_secret: "super-secret"
+    redirect_url: "https://quadboard.example.com/auth/callback"
 ```
 
 ## Environment Variables
@@ -76,6 +79,7 @@ All environment variables start with the QUADBOARD_ prefix.
 | QUADBOARD_AUTH_OIDC_CLIENT_ID	     | The Client ID configured in your OIDC provider.	| (Empty) |
 | QUADBOARD_AUTH_OIDC_CLIENT_SECRET	 | The Client Secret configured in your OIDC provider. |	(Empty) |
 | QUADBOARD_AUTH_OIDC_REDIRECT_URL	 | The callback URL QuadBoard will use (must match the OIDC provider config). |	(Empty) |
+| QUADBOARD_AUTH_SECURE | Set to false to allow session cookies over plain HTTP (for local dev only). | true |
 
 
 > Note: If QUADBOARD_AUTH_OIDC_ISSUER is not set, authentication is completely disabled and all resources are visible.
