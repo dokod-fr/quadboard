@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"log/slog"
 	"net/http"
 	"strings"
 	"time"
@@ -41,7 +42,7 @@ func NewOIDC(ctx context.Context, issuer, clientID, clientSecret, redirectURL, s
 		ClientSecret: clientSecret,
 		RedirectURL:  redirectURL,
 		Endpoint:     provider.Endpoint(),
-		Scopes:       []string{oidc.ScopeOpenID, "profile", "groups"},
+		Scopes:       []string{oidc.ScopeOpenID, "profile"}, // rip off "groups"},
 	}
 
 	verifier := provider.Verifier(&oidc.Config{ClientID: clientID})
@@ -71,54 +72,97 @@ func (o *OIDC) LoginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// 1. On stocke le state dans un cookie temporaire pour pouvoir le vérifier au callback
+	// Generate verifier PKCE
+	verifier := oauth2.GenerateVerifier()
+
+	// Keep it temporarily in a cookie ...
+	http.SetCookie(w, &http.Cookie{
+		Name:     "quadboard_pkce_verifier",
+		Value:    verifier,
+		Path:     "/",
+		HttpOnly: true,
+		Secure:   o.secure,
+		SameSite: http.SameSiteLaxMode,
+		MaxAge:   300,
+	})
+
+	// ... and state for CSRF protection
 	http.SetCookie(w, &http.Cookie{
 		Name:     "quadboard_state",
 		Value:    state,
 		Path:     "/",
 		HttpOnly: true,
-		Secure:   true, // Passe à false pour les tests locaux en HTTP
+		Secure:   o.secure,
 		SameSite: http.SameSiteLaxMode,
-		MaxAge:   300, // Expire après 5 minutes (suffisant pour le flux de login)
+		MaxAge:   300,
 	})
 
-	// 2. On envoie l'utilisateur vers le fournisseur avec ce state
-	url := o.oauth2Config.AuthCodeURL(state)
+	// Create the auth URL with the state and PKCE challenge
+	url := o.oauth2Config.AuthCodeURL(
+		state,
+		oauth2.S256ChallengeOption(verifier),
+	)
+
 	http.Redirect(w, r, url, http.StatusFound)
 }
 
 func (o *OIDC) CallbackHandler(w http.ResponseWriter, r *http.Request) {
-	// 1. Get state from the cookie
+	// Validate the state parameter to prevent CSRF attacks
 	stateCookie, err := r.Cookie("quadboard_state")
 	if err != nil {
 		http.Error(w, "State cookie not found", http.StatusBadRequest)
 		return
 	}
-
-	// 2. Get state from provider callback
 	stateParam := r.URL.Query().Get("state")
-
-	// 3. Check state concordance (CSRF protection)
 	if stateParam != stateCookie.Value {
 		http.Error(w, "State mismatch", http.StatusBadRequest)
 		return
 	}
-
-	// 4. Clean up the state cookie after validation
 	http.SetCookie(w, &http.Cookie{
 		Name:   "quadboard_state",
 		Value:  "",
 		Path:   "/",
-		MaxAge: -1, // Supprime le cookie
+		MaxAge: -1,
 	})
 
+	// Get the PKCE verifier from the cookie
+	pkceCookie, err := r.Cookie("quadboard_pkce_verifier")
+	if err != nil {
+		http.Error(w, "PKCE verifier cookie not found", http.StatusBadRequest)
+		return
+	}
+	verifier := pkceCookie.Value
+
+	http.SetCookie(w, &http.Cookie{
+		Name:   "quadboard_pkce_verifier",
+		Value:  "",
+		Path:   "/",
+		MaxAge: -1,
+	})
+
+	// Exchange the code for a token
 	code := r.URL.Query().Get("code")
-	oauth2Token, err := o.oauth2Config.Exchange(r.Context(), code)
+	oauth2Token, err := o.oauth2Config.Exchange(
+		r.Context(),
+		code,
+		oauth2.VerifierOption(verifier),
+	)
 	if err != nil {
 		http.Error(w, "Failed to exchange token", http.StatusInternalServerError)
 		return
 	}
 
+	if errCode := r.URL.Query().Get("error"); errCode != "" {
+		desc := r.URL.Query().Get("error_description")
+		slog.Error("OIDC authentication failed",
+			"error", errCode,
+			"description", desc,
+		)
+		http.Error(w, desc, http.StatusUnauthorized)
+		return
+	}
+
+	// Extract the ID Token from the OAuth2 token
 	rawIDToken, ok := oauth2Token.Extra("id_token").(string)
 	if !ok {
 		http.Error(w, "No id_token field in oauth2 token", http.StatusInternalServerError)
