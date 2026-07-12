@@ -9,24 +9,26 @@
 ✅ Quadlet parser
 ✅ Quadlet builder
 ✅ Configuration
+✅ OpenID authentication
+⏳ Resource metadata (groups, labels)
+⏳ Traefik labels
+⏳ Quadboard label -- at least link label
+⏳ First UI 
 
 # v 0.2.0 Identity
 
-⏳ OpenID authentication
 ⏳ Authelia integration
-⏳ Group-based authorization
-⏳ Resource metadata (groups, labels)
+⏳ Group-based authorization: filter to show only app you have access
 
 # v 0.3.0 Smart Resources
 
 ⏳ Health checks
-⏳ Traefik labels
-⏳ Resource actions
 ⏳ External URLs
 
 # v 0.4.0 Dashboard UX
 
 ⏳ Resource grouping
+⏳ Resource actions
 ⏳ Search
 ⏳ Filters
 ⏳ Flip cards

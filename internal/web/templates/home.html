@@ -1,0 +1,30 @@
+{{define "content"}}
+<div class="card-grid">
+    {{range .Resources}}
+    <a href="{{.ID}}" target="_blank" rel="noopener noreferrer" class="card">
+        <div class="card-content">
+            <div class="card-header">
+                <i data-lucide="box" class="card-icon"></i>
+                <h3 class="card-title">{{.Name}}</h3>
+            </div>
+            {{if .Description}}
+            <p class="card-desc">{{.Description}}</p>
+            {{end}}
+        </div>
+        <div class="card-footer">
+            {{if .Group}}
+            <span class="card-provider">{{.Group}}</span>
+            {{else}}
+            <span class="card-provider">Default</span>
+            {{end}}
+            <span class="card-open">Open <i data-lucide="external-link"></i></span>
+        </div>
+    </a>
+    {{else}}
+    <div class="empty-state">
+        <i data-lucide="search-x"></i>
+        <p>No services discovered.</p>
+    </div>
+    {{end}}
+</div>
+{{end}}

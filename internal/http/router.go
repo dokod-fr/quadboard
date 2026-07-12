@@ -1,13 +1,14 @@
 package http
 
 import (
+	"io/fs"
 	"net/http"
 
 	"github.com/dokod-fr/quadboard/internal/app"
 	"github.com/dokod-fr/quadboard/internal/auth"
 	"github.com/dokod-fr/quadboard/internal/http/handlers"
 	"github.com/dokod-fr/quadboard/internal/middleware"
-	"github.com/dokod-fr/quadboard/web"
+	"github.com/dokod-fr/quadboard/internal/web"
 	"github.com/go-chi/chi/v5"
 )
 
@@ -19,11 +20,16 @@ func NewRouter(discovery *app.Discovery, oidc *auth.OIDC) http.Handler {
 	r.Get("/version", handlers.ServeVersion)
 
 	// Manage assets
+	assetsFS, err := fs.Sub(web.FS(), "assets")
+	if err != nil {
+		panic(err) // This should never happen since the assets directory is embedded
+	}
+
 	r.Handle(
 		"/assets/*",
 		http.StripPrefix(
 			"/assets/",
-			http.FileServer(http.FS(web.FS())),
+			http.FileServer(http.FS(assetsFS)),
 		),
 	)
 

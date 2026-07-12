@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuadBoard</title>
+    <!-- Police Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <!-- Icônes Lucide -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="/assets/js/theme.js" defer></script>
+</head>
+<body>
+    <header class="header">
+        <div class="brand">
+            <div class="logo"></div>
+            <h1>QuadBoard</h1>
+        </div>
+        <div class="header-actions">
+            <button id="theme-toggle" class="btn-icon" aria-label="Toggle theme">
+                <i data-lucide="sun-moon"></i>
+            </button>
+            {{if .Username}}
+            <div class="user-profile">
+                <i data-lucide="user-circle"></i>
+                <span>{{.Username}}</span>
+            </div>
+            {{end}}
+        </div>
+    </header>
+    <main class="container">
+        {{template "content" .}}
+    </main>
+    <script>lucide.createIcons();</script>
+</body>
+</html>
