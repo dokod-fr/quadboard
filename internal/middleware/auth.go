@@ -1,15 +1,10 @@
 package middleware
 
 import (
-	"context"
 	"net/http"
 
 	"github.com/dokod-fr/quadboard/internal/auth"
 )
-
-type contextKey string
-
-const GroupsKey contextKey = "groups"
 
 // AuthMiddleware check OIDC session. If inactive, redirect to /login.
 func AuthMiddleware(o *auth.OIDC) func(http.Handler) http.Handler {
@@ -22,7 +17,7 @@ func AuthMiddleware(o *auth.OIDC) func(http.Handler) http.Handler {
 			}
 
 			// Inject groups in the context for the downstream handlers
-			ctx := context.WithValue(r.Context(), GroupsKey, session.Groups)
+			ctx := auth.WithSession(r.Context(), *session)
 			next.ServeHTTP(w, r.WithContext(ctx))
 		})
 	}

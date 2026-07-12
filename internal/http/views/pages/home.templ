@@ -4,9 +4,10 @@ import (
     "github.com/dokod-fr/quadboard/internal/domain"
     "github.com/dokod-fr/quadboard/internal/http/views/components"
     "github.com/dokod-fr/quadboard/internal/http/views/layouts"
+    "github.com/dokod-fr/quadboard/internal/auth"
 )
 
-templ Home(resources []domain.Resource) {
+templ Home(resources []domain.Resource, session auth.Session) {
     @layouts.Layout() {
 
         <section class="dashboard">
@@ -15,6 +16,9 @@ templ Home(resources []domain.Resource) {
                 <div>
                     <h2>Dashboard</h2>
                     <p>Your self-hosted services at a glance.</p>
+                </div>
+                <div>
+                  User: { session.Username }
                 </div>
             </header>
 

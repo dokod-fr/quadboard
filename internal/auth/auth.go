@@ -29,6 +29,7 @@ type OIDC struct {
 type Session struct {
 	Username string   `json:"username"`
 	Groups   []string `json:"groups"`
+	Email    string   `json:"email"`
 }
 
 func NewOIDC(ctx context.Context, issuer, clientID, clientSecret, redirectURL, secretKey string, secure bool) (*OIDC, error) {
@@ -178,15 +179,18 @@ func (o *OIDC) CallbackHandler(w http.ResponseWriter, r *http.Request) {
 	var claims struct {
 		PreferredUsername string   `json:"preferred_username"`
 		Groups            []string `json:"groups"`
+		Email             string   `json:"email"`
 	}
 	if err := idToken.Claims(&claims); err != nil {
 		http.Error(w, "Failed to parse claims", http.StatusInternalServerError)
 		return
 	}
+	slog.Debug("claims struct", slog.Any("claims", claims))
 
 	session := Session{
 		Username: claims.PreferredUsername,
 		Groups:   claims.Groups,
+		Email:    claims.Email,
 	}
 
 	if err := o.setSessionCookie(w, session); err != nil {
@@ -216,7 +220,7 @@ func (o *OIDC) setSessionCookie(w http.ResponseWriter, session Session) error {
 		Value:    encoded,
 		Path:     "/",
 		HttpOnly: true,
-		Secure:   true, // S'assurer que l'app est servie en HTTPS
+		Secure:   o.secure,
 		SameSite: http.SameSiteLaxMode,
 		Expires:  time.Now().Add(24 * time.Hour),
 	})

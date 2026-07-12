@@ -1,9 +1,11 @@
 package handlers
 
 import (
+	"log/slog"
 	"net/http"
 
 	"github.com/dokod-fr/quadboard/internal/app"
+	"github.com/dokod-fr/quadboard/internal/auth"
 	"github.com/dokod-fr/quadboard/internal/http/views/pages"
 )
 
@@ -23,6 +25,11 @@ func (h *HomeHandler) Serve(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	ctx := r.Context()
 
-	pages.Home(resources).Render(r.Context(), w)
+	session, _ := auth.SessionFromContext(ctx)
+
+	slog.Debug("Home handler", slog.Any("session", session))
+
+	pages.Home(resources, session).Render(ctx, w)
 }
