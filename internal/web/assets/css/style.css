@@ -3,8 +3,8 @@
     --card-bg: #ffffff;
     --text-color: #1e293b;
     --text-muted: #64748b;
-    --primary-color: #2563eb; /* Bleu */
-    --secondary-color: #10b981; /* Vert */
+    --primary-color: #2563eb;
+    --secondary-color: #10b981;
     --border-color: #e2e8f0;
     --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
     --logo-gradient: linear-gradient(135deg, #2563eb 0%, #10b981 100%);
@@ -121,6 +121,7 @@ body {
     justify-content: space-between;
     box-shadow: var(--shadow);
     transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s;
+    overflow: hidden; /* Ajouté pour éviter les débordements d'images */
 }
 
 .card:hover {
@@ -140,12 +141,24 @@ body {
     width: 24px;
     height: 24px;
     color: var(--primary-color);
+    flex-shrink: 0; /* Empêche l'icône de rétrécir */
+}
+
+.card-logo {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+    max-width: 100%; /* Sécurité contre les images trop grandes */
+    flex-shrink: 0; /* Empêche le logo de rétrécir */
 }
 
 .card-title {
     font-size: 1.125rem;
     font-weight: 600;
     color: var(--text-color);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .card-desc {

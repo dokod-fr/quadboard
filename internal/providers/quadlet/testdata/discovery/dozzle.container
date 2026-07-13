@@ -33,12 +33,13 @@ HealthTimeout=30s
 
 # if using traefik, automatically configure to proxy the web service
 Label=traefik.enable=true
-Label=traefik.http.routers.dozzle.rule="Host(`dozzle.example.com`)"
+Label=traefik.http.routers.dozzle.rule="Host(`dozzle.dokod.fr`)"
 Label=traefik.http.routers.dozzle.middlewares="authelia@docker"
 Label=traefik.http.routers.dozzle.entrypoints=websecure
 Label=traefik.http.routers.dozzle.tls=true
 Label=traefik.http.routers.dozzle.tls.certresolver=tlschallenge
 Label=traefik.http.services.dozzle.loadbalancer.server.port=8080
+Label=quadboard.icon=save
 
 [Install]
 WantedBy=default.target

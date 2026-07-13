@@ -11,6 +11,7 @@ type Pod struct {
 	Filename    string // nextcloud
 	Path        string
 	Description string
+	Labels      map[string]string
 }
 
 type Container struct {
@@ -19,8 +20,7 @@ type Container struct {
 	Path        string
 	Description string
 	Pod         string
-
-	File UnitFile
+	Labels      map[string]string
 }
 
 type Volume struct {

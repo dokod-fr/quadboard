@@ -10,7 +10,7 @@
 ✅ Quadlet builder
 ✅ Configuration
 ✅ OpenID authentication
-⏳ Resource metadata (groups, labels)
+✅ Resource metadata (groups, labels)
 ⏳ Traefik labels
 ⏳ Quadboard label -- at least link label
 ⏳ First UI 
@@ -36,6 +36,7 @@
 
 # v 0.5.0 Extensibility
 
+⏳ Cache
 ⏳ Multi-provider support
 ⏳ Docker provider
 ⏳ Provider configuration

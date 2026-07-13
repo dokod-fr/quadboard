@@ -4,7 +4,7 @@
 ###
 
 [Unit]
-Description=Next Cloud
+Description=Next Cloud est un service de Cloud
 Documentation=https://nextcloud.com/fr/
 Requires=nextcloud-nginx.service postgres@nextcloud.service redis@nextcloud.service
 
@@ -33,5 +33,7 @@ Volume=%h/containers-config/volumes/nextcloud/hook.d:/docker-entrypoint-hooks.d
 # file based secrets
 Secret=nextcloud-admin-password,type=mount,uid=1001
 
+Label=quadboard.logo=https://images.icon-icons.com/2407/PNG/512/nextcloud_icon_146137.png
+Label=quadboard.url=https://nuage.dokod.fr
 [Install]
 WantedBy=default.target
