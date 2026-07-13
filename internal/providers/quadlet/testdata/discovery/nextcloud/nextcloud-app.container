@@ -21,10 +21,6 @@ Pod=nextcloud.pod
 
 # environment variables
 Environment=TZ=Europe/Paris
-# -- DB 
-Environment=POSTGRES_PORT=5432
-Environment=POSTGRES_HOST=localhost
-Environment=POSTGRES_DB=nextcloud
 
 Volume=nextcloud-data.volume:/var/www/html
 Volume=%h/containers-config/volumes/nextcloud/hook.d:/docker-entrypoint-hooks.d
@@ -33,7 +29,8 @@ Volume=%h/containers-config/volumes/nextcloud/hook.d:/docker-entrypoint-hooks.d
 # file based secrets
 Secret=nextcloud-admin-password,type=mount,uid=1001
 
+# Test logo label
 Label=quadboard.logo=https://images.icon-icons.com/2407/PNG/512/nextcloud_icon_146137.png
-Label=quadboard.url=https://nuage.dokod.fr
+Label=quadboard.url=https://nuage.example.com
 [Install]
 WantedBy=default.target

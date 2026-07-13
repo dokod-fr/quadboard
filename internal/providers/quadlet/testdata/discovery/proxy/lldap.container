@@ -23,11 +23,6 @@ Environment=UID=1001
 Environment=GID=1001
 Environment=TZ=Europe/Paris
 
-# set secrets in files, see below for environment variable method
-Environment=LLDAP_KEY_SEED_FILE=/run/secrets/lldap-key-seed
-Environment=LLDAP_JWT_SECRET_FILE=/run/secrets/lldap-jwt-secret
-Environment=LLDAP_LDAP_USER_PASS_FILE=/run/secrets/lldap-ldap-user-pass
-
 Volume=lldap-data.volume:/data:Z
 
 # health check
@@ -39,6 +34,7 @@ HealthTimeout=30s
 
 # if using traefik, automatically configure to proxy the web service
 Label=traefik.enable=true
+Label=traefik.http.routers.lldap.rule="Host(`lldap.example.com`)"
 Label=traefik.http.services.lldap.loadbalancer.server.port=17170
 
 # Environment=LLDAP_URL=http://localhost:17170
