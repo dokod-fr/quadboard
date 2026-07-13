@@ -1,0 +1,30 @@
+###
+### Postgres Db - podman quadlet file
+### https://docs.podman.io/en/latest/markdown/podman-systemd.unit.5.html
+###
+
+[Unit]
+Description=%i-db container
+Documentation=https://hub.docker.com/_/postgres
+# likely only needed for Podman < 5.3 (see containers/podman#22197 and #24637)
+After=podman-user-wait-network-online.service
+
+[Service]
+Restart=on-failure
+
+[Container]
+ContainerName=%i-db
+Image=docker.io/postgres:17
+
+# health check
+HealthInterval=5s
+HealthRetries=3
+HealthStartPeriod=15s
+HealthTimeout=30s
+
+# environment variables
+Environment=POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+Environment=POSTGRES_USER=adm
+
+[Install]
+WantedBy=default.target

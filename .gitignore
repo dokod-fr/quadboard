@@ -23,10 +23,19 @@ profile.cov
 # Go workspace file
 go.work
 go.work.sum
+bin/
+dist/
+coverage.out
+
+# Go - templates
+*_templ.go
+
+# Nix
+result
 
 # env file
 .env
 
-# Editor/IDE
-# .idea/
-# .vscode/
+# IDE
+.vscode/
+.idea/

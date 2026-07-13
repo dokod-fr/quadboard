@@ -1,0 +1,99 @@
+version: "3"
+
+vars:
+  APP_NAME: quadboard
+  CMD_DIR: ./cmd/quadboard
+  BIN_DIR: ./bin
+
+  VERSION:
+    sh: git describe --tags --always --dirty 2>/dev/null || echo dev
+
+  COMMIT:
+    sh: git rev-parse --short HEAD 2>/dev/null || echo unknown
+
+  DATE:
+    sh: date -u +"%Y-%m-%dT%H:%M:%SZ"
+
+tasks:
+  default:
+    desc: Show available tasks
+    cmds:
+      - task --list
+
+  build:
+    desc: Build QuadBoard
+    cmds:
+      - templ generate ./...
+      - mkdir -p {{.BIN_DIR}}
+      - >
+        go build
+        -ldflags="
+        -X github.com/dokod-fr/quadboard/internal/version.Version={{.VERSION}}
+        -X github.com/dokod-fr/quadboard/internal/version.Commit={{.COMMIT}}
+        -X github.com/dokod-fr/quadboard/internal/version.Date={{.DATE}}
+        "
+        -o {{.BIN_DIR}}/{{.APP_NAME}}
+        {{.CMD_DIR}}
+
+  release:
+    desc: Build release binary
+    cmds:
+      - task: clean
+      - task: build
+
+  run:
+    desc: Run the application
+    deps:
+      - build
+    cmds:
+      - ./{{.BIN_DIR}}/{{.APP_NAME}} serve
+
+  test:
+    desc: Run all unit tests
+    cmds:
+      - go test ./...
+
+  coverage:
+    desc: Run unit tests and display code coverage
+    cmds:
+      - go test -coverprofile=coverage.out ./...
+      - go tool cover -func=coverage.out
+
+  coverage-html:
+    desc: Generate an HTML code coverage report
+    cmds:
+      - go test -coverprofile=coverage.out ./...
+      - go tool cover -html=coverage.out
+
+  fmt:
+    desc: Format Go source files
+    cmds:
+      - gofmt -w .
+      - gofumpt -w .
+
+  lint:
+    desc: Run linter
+    cmds:
+      - golangci-lint run
+
+  tidy:
+    desc: Tidy Go modules
+    cmds:
+      - go mod tidy
+
+  clean:
+    cmds:
+      - rm -rf bin
+      - find . -name "*_templ.go" -delete
+
+  check:
+    desc: Run all verification tasks
+    deps:
+      - fmt
+      - lint
+      - test
+
+  dev:
+    cmds:
+      - templ generate ./...
+      - go run ./cmd/quadboard serve

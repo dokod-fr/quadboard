@@ -1,0 +1,45 @@
+###
+### doozle - podman quadlet file
+### https://docs.podman.io/en/latest/markdown/podman-systemd.unit.5.html
+###
+
+[Unit]
+Description=Dozzle logging
+Documentation=https://github.com/amir20/dozzle
+
+[Service]
+Restart=on-failure
+
+[Container]
+AutoUpdate=registry
+ContainerName=dozzle
+Image=docker.io/amir20/dozzle:v10
+
+# using multiple networks for traefik and db, not essential
+Network=spider.network
+
+Environment=DOZZLE_SOCKET_PATH=/var/run/docker.sock
+Environment=DOZZLE_REMOTE_AGENT=
+Environment=DOZZLE_AUTH_PROVIDER=forward-proxy
+
+Volume=/run/user/1001/podman/podman.sock:/var/run/docker.sock
+
+# health check
+HealthCmd=/dozzle healthcheck
+HealthInterval=30s
+HealthRetries=3
+HealthStartPeriod=15s
+HealthTimeout=30s
+
+# if using traefik, automatically configure to proxy the web service
+Label=traefik.enable=true
+Label=traefik.http.routers.dozzle.rule="Host(`dozzle.dokod.fr`)"
+Label=traefik.http.routers.dozzle.middlewares="authelia@docker"
+Label=traefik.http.routers.dozzle.entrypoints=websecure
+Label=traefik.http.routers.dozzle.tls=true
+Label=traefik.http.routers.dozzle.tls.certresolver=tlschallenge
+Label=traefik.http.services.dozzle.loadbalancer.server.port=8080
+Label=quadboard.icon=save
+
+[Install]
+WantedBy=default.target

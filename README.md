@@ -45,13 +45,7 @@ QuadBoard follows a few simple principles:
 
 ## Roadmap
 
-- [ ] HTTP server
-- [ ] Quadlet provider
-- [ ] HTML renderer
-- [ ] Theme engine
-- [ ] Traefik integration
-- [ ] Authelia integration
-- [ ] REST API
+[Roadmap](docs/roadmap.md)
 
 ## License
 

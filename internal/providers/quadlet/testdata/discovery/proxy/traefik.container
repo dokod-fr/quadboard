@@ -1,0 +1,23 @@
+[Unit]
+Description=Traefik reverse proxy
+Documentation=https://github.com/traefik/traefik
+After=http.socket https.socket
+Requires=http.socket https.socket authelia.service
+
+[Service]
+Sockets=http.socket https.socket
+Restart=on-failure
+
+[Container]
+ContainerName=traefik
+Image=docker.io/library/traefik:v3
+NoNewPrivileges=true
+
+Environment=OVH_ENDPOINT=ovh-eu
+Environment=TZ=Europe/Paris
+
+Label=traefik.http.routers.traefik.entrypoints=websecure
+Label=traefik.http.routers.traefik.middlewares=authelia@docker
+
+[Install]
+WantedBy=default.target
