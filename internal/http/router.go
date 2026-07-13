@@ -7,8 +7,8 @@ import (
 	"github.com/dokod-fr/quadboard/internal/app"
 	"github.com/dokod-fr/quadboard/internal/auth"
 	"github.com/dokod-fr/quadboard/internal/http/handlers"
+	"github.com/dokod-fr/quadboard/internal/http/view"
 	"github.com/dokod-fr/quadboard/internal/middleware"
-	"github.com/dokod-fr/quadboard/internal/web"
 	"github.com/go-chi/chi/v5"
 )
 
@@ -20,7 +20,7 @@ func NewRouter(discovery *app.Discovery, oidc *auth.OIDC) http.Handler {
 	r.Get("/version", handlers.ServeVersion)
 
 	// Manage assets
-	assetsFS, err := fs.Sub(web.FS(), "assets")
+	assetsFS, err := fs.Sub(view.FS(), "assets")
 	if err != nil {
 		panic(err) // This should never happen since the assets directory is embedded
 	}

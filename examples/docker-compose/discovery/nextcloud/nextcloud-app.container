@@ -1,0 +1,36 @@
+###
+### NextCloud - podman quadlet file
+### https://docs.podman.io/en/latest/markdown/podman-systemd.unit.5.html
+###
+
+[Unit]
+Description=Next Cloud est un service de Cloud
+Documentation=https://nextcloud.com/fr/
+Requires=nextcloud-nginx.service postgres@nextcloud.service redis@nextcloud.service
+
+[Service]
+Restart=on-failure
+
+[Container]
+ContainerName=nextcloud
+Image=docker.io/library/nextcloud:34.0.0-fpm-alpine
+Pod=nextcloud.pod
+
+# using multiple networks for traefik and db, not essential
+# Network=spider.network
+
+# environment variables
+Environment=TZ=Europe/Paris
+
+Volume=nextcloud-data.volume:/var/www/html
+Volume=%h/containers-config/volumes/nextcloud/hook.d:/docker-entrypoint-hooks.d
+
+# secrets
+# file based secrets
+Secret=nextcloud-admin-password,type=mount,uid=1001
+
+# Test logo label
+Label=quadboard.logo=https://images.icon-icons.com/2407/PNG/512/nextcloud_icon_146137.png
+Label=quadboard.url=https://nuage.example.com
+[Install]
+WantedBy=default.target

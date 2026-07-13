@@ -7,7 +7,7 @@ import (
 	"github.com/dokod-fr/quadboard/internal/app"
 	"github.com/dokod-fr/quadboard/internal/auth"
 	"github.com/dokod-fr/quadboard/internal/domain"
-	"github.com/dokod-fr/quadboard/internal/web"
+	"github.com/dokod-fr/quadboard/internal/http/view"
 )
 
 type HomeHandler struct {
@@ -17,7 +17,7 @@ type HomeHandler struct {
 
 func NewHomeHandler(discovery *app.Discovery) *HomeHandler {
 	tmpl := template.Must(
-		template.ParseFS(web.FS(),
+		template.ParseFS(view.FS(),
 			"templates/layout.html",
 			"templates/home.html",
 		),

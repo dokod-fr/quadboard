@@ -1,0 +1,14 @@
+logging:
+  level: debug
+providers:
+  quadlet:
+    paths:
+      - /etc/containers/systemd
+auth:
+  secret_key: "local-dev-secret-key"
+  secure: false
+  oidc:
+    issuer: "http://domain.local:8080/realms/quadboard"
+    client_id: "quadboard"
+    client_secret: "super-secret"
+    redirect_url: "http://domain.local:8081/auth/callback"

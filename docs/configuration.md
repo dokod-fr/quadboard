@@ -14,14 +14,14 @@ Configuration is loaded using the following priority (from highest to lowest):
 
 By default, QuadBoard will look for a config.yaml file located next to the QuadBoard executable. 
 
-You can specify a custom path for the configuration file by setting the QUADBOARD_CONFIG_PATH environment variable.
+You can specify a custom path for the configuration file by setting the QUADBOARD_CONFIG_FILE environment variable.
 Example config.yaml
 
 ```yml
 server:
   address: "0.0.0.0:8080"
-    read_timeout: 5
-      write_timeout: 10
+  read_timeout: 5
+  write_timeout: 10
 logging:
   level: "info"
   format: "text"
@@ -49,7 +49,7 @@ All environment variables start with the QUADBOARD_ prefix.
 
 | Variable                      | Description               | Default                |
 |-------------------------------|---------------------------|------------------------|	
-| QUADBOARD_CONFIG_PATH	        | Path to a custom YAML configuration file.        |	(Checks for config.yaml next to the binary) |
+| QUADBOARD_CONFIG_FILE	        | Path to a custom YAML configuration file.        |	(Checks for config.yaml next to the binary) |
 | QUADBOARD_SERVER_ADDRESS	    | The address and port the HTTP server listens on. |	0.0.0.0:8080 |
 | QUADBOARD_SERVER_READ_TIMEOUT	| HTTP read timeout in seconds.                    |	5  |
 | QUADBOARD_SERVER_WRITE_TIMEOUT|	HTTP write timeout in seconds.                   | 10  |
@@ -83,3 +83,27 @@ All environment variables start with the QUADBOARD_ prefix.
 
 
 > Note: If QUADBOARD_AUTH_OIDC_ISSUER is not set, authentication is completely disabled and all resources are visible.
+
+## Docker Configuration
+
+When running QuadBoard inside a container, configuration should generally be provided from outside the image.
+
+The recommended approach is to mount a configuration file:
+
+```bash
+docker run \
+  -v ./config.yaml:/etc/quadboard/config.yaml:ro \
+  -e QUADBOARD_CONFIG_FILE=/etc/quadboard/config.yaml \
+  ghcr.io/dokod-fr/quadboard:latest
+```
+
+The container image does not contain environment-specific configuration.
+
+This allows the same image to be reused with different:
+
+* OIDC providers
+* Quadlet locations
+* logging settings
+* deployment environments
+
+For production deployments, prefer mounting the configuration file as read-only.

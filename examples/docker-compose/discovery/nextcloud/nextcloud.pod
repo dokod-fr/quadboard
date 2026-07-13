@@ -1,0 +1,6 @@
+[Pod]
+PodName=nextcloud
+Network=spider.network
+
+[Install]
+WantedBy=default.target

@@ -34,11 +34,11 @@ func Load() (Config, string, error) {
 }
 
 // resolveConfigPath determines which configuration file to use.
-// 1. Uses QUADBOARD_CONFIG_PATH if set.
+// 1. Uses QUADBOARD_CONFIG_FILE if set.
 // 2. Looks for config.yaml next to the executable.
 // 3. Returns empty string if no file is found.
 func resolveConfigPath() string {
-	if path := os.Getenv("QUADBOARD_CONFIG_PATH"); path != "" {
+	if path := os.Getenv("QUADBOARD_CONFIG_FILE"); path != "" {
 		return path
 	}
 

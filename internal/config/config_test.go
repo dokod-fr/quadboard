@@ -8,7 +8,7 @@ import (
 
 func TestLoad(t *testing.T) {
 	envKeys := []string{
-		"QUADBOARD_CONFIG_PATH",
+		"QUADBOARD_CONFIG_FILE",
 		"QUADBOARD_SERVER_ADDRESS",
 		"QUADBOARD_SERVER_READ_TIMEOUT",
 		"QUADBOARD_SERVER_WRITE_TIMEOUT",
@@ -21,7 +21,7 @@ func TestLoad(t *testing.T) {
 	}
 
 	t.Run("Default only", func(t *testing.T) {
-		os.Unsetenv("QUADBOARD_CONFIG_PATH")
+		os.Unsetenv("QUADBOARD_CONFIG_FILE")
 		cfg, path, err := Load()
 		if err != nil {
 			t.Fatalf("Load() unexpected error: %v", err)
@@ -59,7 +59,7 @@ providers:
 			t.Fatalf("Failed to create test file: %v", err)
 		}
 
-		os.Setenv("QUADBOARD_CONFIG_PATH", yamlPath)
+		os.Setenv("QUADBOARD_CONFIG_FILE", yamlPath)
 		os.Unsetenv("QUADBOARD_SERVER_ADDRESS")
 		os.Unsetenv("QUADBOARD_LOGGING_LEVEL")
 
@@ -97,7 +97,7 @@ providers:
 			t.Fatalf("Failed to create test file: %v", err)
 		}
 
-		os.Setenv("QUADBOARD_CONFIG_PATH", yamlPath)
+		os.Setenv("QUADBOARD_CONFIG_FILE", yamlPath)
 		os.Setenv("QUADBOARD_SERVER_ADDRESS", "0.0.0.0:3000")
 		os.Setenv("QUADBOARD_LOGGING_LEVEL", "error")
 		os.Setenv("QUADBOARD_QUADLET_PATHS", "/var/run/quadlet, /opt/quadlet")

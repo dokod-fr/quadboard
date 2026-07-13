@@ -1,0 +1,37 @@
+services:
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.2
+    command:
+      - start-dev
+      - --import-realm
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    volumes:
+      - ./realm:/opt/keycloak/data/import
+    ports:
+      - "8080:8080"
+
+    networks:
+      default:
+        aliases:
+          - domain.local
+
+  quadboard:
+    # image: ghcr.io/dokod-fr/quadboard:latest
+    build: 
+      context: ../..
+    restart: unless-stopped
+
+    ports:
+      - "8081:8080"
+
+    depends_on:
+      - keycloak
+
+    environment:
+      QUADBOARD_CONFIG_FILE: /etc/quadboard/config.yaml
+
+    volumes:
+      - ./discovery:/etc/containers/systemd:ro
+      - ./auth-config.yaml:/etc/quadboard/config.yaml:ro

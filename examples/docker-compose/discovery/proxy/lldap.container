@@ -1,0 +1,46 @@
+###
+### lldap - podman quadlet file
+### https://docs.podman.io/en/latest/markdown/podman-systemd.unit.5.html
+###
+
+[Unit]
+Description=LLDAP container
+Documentation=https://github.com/lldap/lldap
+# Requires=lldap-db.service
+
+[Service]
+Restart=on-failure
+
+[Container]
+ContainerName=lldap
+Image=docker.io/lldap/lldap:v0.6.3-debian
+
+# using multiple networks for traefik and db, not essential
+Network=spider.network
+
+# environment variables
+Environment=UID=1001
+Environment=GID=1001
+Environment=TZ=Europe/Paris
+
+Volume=lldap-data.volume:/data:Z
+
+# health check
+HealthCmd=/app/lldap healthcheck
+HealthInterval=30s
+HealthRetries=3
+HealthStartPeriod=15s
+HealthTimeout=30s
+
+# if using traefik, automatically configure to proxy the web service
+Label=traefik.enable=true
+Label=traefik.http.routers.lldap.rule="Host(`lldap.example.com`)"
+Label=traefik.http.services.lldap.loadbalancer.server.port=17170
+
+# Environment=LLDAP_URL=http://localhost:17170
+# Environment=LLDAP_ADMIN_USERNAME=admin
+# Environment=LLDAP_ADMIN_PASSWORD_FILE=/run/secrets/lldap-ldap-user-pass
+# Volume=%h/containers-config/volumes/lldap:/bootstrap:ro,Z
+
+[Install]
+WantedBy=default.target

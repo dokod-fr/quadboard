@@ -51,11 +51,11 @@
       "serviceAccountsEnabled": false,
 
       "redirectUris": [
-        "http://localhost:8080/auth/callback"
+        "http://domain.local:8081/auth/callback"
       ],
 
       "webOrigins": [
-        "http://localhost:8080"
+        "http://domain.local:8081"
       ],
 
       "attributes": {
