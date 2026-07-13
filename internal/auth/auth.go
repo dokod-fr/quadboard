@@ -33,7 +33,7 @@ type Session struct {
 }
 
 func NewOIDC(ctx context.Context, issuer, clientID, clientSecret, redirectURL, secretKey string, secure bool) (*OIDC, error) {
-	provider, err := oidc.NewProvider(ctx, issuer)
+	provider, err := createProvider(ctx, issuer)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create OIDC provider: %w", err)
 	}
@@ -55,6 +55,41 @@ func NewOIDC(ctx context.Context, issuer, clientID, clientSecret, redirectURL, s
 		secretKey:    []byte(secretKey),
 		secure:       secure,
 	}, nil
+}
+
+func createProvider(ctx context.Context, issuer string) (*oidc.Provider, error) {
+	const (
+		maxRetries = 10              // TODO: Create variable for this constant
+		delay      = 2 * time.Second // TODO: Create variable for this constant
+	)
+
+	var lastErr error
+
+	for i := 1; i <= maxRetries; i++ {
+		provider, err := oidc.NewProvider(ctx, issuer)
+		if err == nil {
+			if i > 1 {
+				slog.Info("OIDC provider available",
+					"issuer", issuer,
+					"attempt", i,
+				)
+			}
+			return provider, nil
+		}
+
+		lastErr = err
+
+		slog.Warn("OIDC provider not yet available",
+			"issuer", issuer,
+			"attempt", i,
+			"max_attempts", maxRetries,
+			"error", err,
+		)
+
+		time.Sleep(delay)
+	}
+
+	return nil, fmt.Errorf("Attempts %w failed after %d", lastErr, maxRetries)
 }
 
 // generateState random state string for OIDC login to prevent CSRF attacks. It returns a base64 encoded string.
