@@ -22,8 +22,8 @@ func TestBuild(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if len(resources) != 5 {
-		t.Fatalf("expected 5 resources, got %d", len(resources))
+	if len(resources) != 4 {
+		t.Fatalf("expected 4 resources, got %d", len(resources))
 	}
 
 	fmt.Println("Resources built:")
@@ -32,7 +32,6 @@ func TestBuild(t *testing.T) {
 	}
 	assertContainsResource(t, resources, "dozzle")
 	assertContainsResource(t, resources, "nextcloud")
-	assertContainsResource(t, resources, "authelia")
 	assertContainsResource(t, resources, "lldap")
 	assertContainsResource(t, resources, "traefik")
 

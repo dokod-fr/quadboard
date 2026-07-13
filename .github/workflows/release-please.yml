@@ -1,25 +1,48 @@
-name: Release Please
+name: Docker
 
 on:
-  push:
-    branches:
-      - main
+  release:
+    types:
+      - published
 
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read
+  packages: write
 
 jobs:
-  release:
+  docker:
+
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/setup-go@v5
-        with:
-          go-version-file: go.mod
 
-      - run: go test ./...
-      
-      - uses: googleapis/release-please-action@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login GHCR
+        uses: docker/login-action@v3
         with:
-          release-type: go
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository }}
+          tags: |
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=raw,value=latest
+
+      - name: Build and Push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}

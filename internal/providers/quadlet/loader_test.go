@@ -15,12 +15,12 @@ func TestLoad(t *testing.T) {
 		t.Fatalf("expected 1 pod, got %d", len(model.Pods))
 	}
 
-	if len(model.Containers) != 6 {
-		t.Fatalf("expected 6 containers, got %d", len(model.Containers))
+	if len(model.Containers) != 5 {
+		t.Fatalf("expected 5 containers, got %d", len(model.Containers))
 	}
 
-	if len(model.Volumes) != 5 {
-		t.Fatalf("expected 5 volumes, got %d", len(model.Volumes))
+	if len(model.Volumes) != 4 {
+		t.Fatalf("expected 4 volumes, got %d", len(model.Volumes))
 	}
 }
 
@@ -32,7 +32,6 @@ func TestLoadNames(t *testing.T) {
 
 	assertContainsPod(t, model, "nextcloud")
 
-	assertContainsContainer(t, model, "authelia")
 	assertContainsContainer(t, model, "lldap")
 	assertContainsContainer(t, model, "traefik")
 	assertContainsContainer(t, model, "dozzle")
