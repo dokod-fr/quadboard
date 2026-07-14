@@ -36,8 +36,8 @@ func TestLoad(t *testing.T) {
 		if cfg.Logging.Level != "info" {
 			t.Errorf("Expected default level: info, got: %s", cfg.Logging.Level)
 		}
-		if len(cfg.Providers.Quadlet.Paths) != 2 {
-			t.Errorf("Expected 2 default paths, got: %v", cfg.Providers.Quadlet.Paths)
+		if len(cfg.Providers.Quadlet.Paths) != 1 {
+			t.Errorf("Expected 1 default paths, got: %v", cfg.Providers.Quadlet.Paths)
 		}
 	})
 
