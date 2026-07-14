@@ -1,9 +1,9 @@
 logging:
   level: debug
-providers:
-  quadlet:
-    paths:
-      - /etc/containers/systemd
+#providers:
+#  quadlet:
+#    paths:
+#      - /etc/containers/systemd
 auth:
   secret_key: "local-dev-secret-key"
   secure: false

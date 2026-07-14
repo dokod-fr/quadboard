@@ -1,17 +1,8 @@
 package config
 
-import (
-	"os"
-	"path/filepath"
-)
-
 func defaultConfig() Config {
 	quadletPaths := []string{
 		"/etc/containers/systemd/",
-	}
-
-	if userConfigDir, err := os.UserConfigDir(); err == nil {
-		quadletPaths = append(quadletPaths, filepath.Join(userConfigDir, "containers", "systemd"))
 	}
 
 	return Config{

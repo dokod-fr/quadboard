@@ -44,7 +44,7 @@ Breaking changes may still occur while the project matures.
 Download the latest release and run:
 
 ```bash
-./quadboard
+./quadboard serve
 ```
 
 By default QuadBoard will:

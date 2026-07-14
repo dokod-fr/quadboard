@@ -1,23 +1,43 @@
 package quadlet
 
 import (
+	"fmt"
 	"io/fs"
+	"log/slog"
+	"os"
 	"path/filepath"
 	"strings"
 )
 
 func Load(paths ...string) (*Model, error) {
+
 	model := &Model{}
 
 	for _, path := range paths {
-		if err := filepath.WalkDir(path, func(path string, d fs.DirEntry, err error) error {
+		// Check directory existence before continue
+		if _, err := os.Stat(path); os.IsNotExist(err) {
+			slog.Warn("Directory in configuration not found, ignored",
+				slog.String("path", path),
+			)
+			continue
+		}
+
+		slog.Debug("Walk through directory", slog.String("path", path))
+
+		err := filepath.WalkDir(path, func(currentPath string, d fs.DirEntry, err error) error {
 			if err != nil {
-				return err
+				slog.Warn("Nothing found in this directory",
+					slog.String("path", currentPath),
+					slog.Any("error", err),
+				)
+				return filepath.SkipDir
 			}
 
-			return loadEntry(model, path, d)
-		}); err != nil {
-			return nil, err
+			return loadEntry(model, currentPath, d)
+		})
+
+		if err != nil {
+			return nil, fmt.Errorf("Critical error while walking through %s: %w", path, err)
 		}
 	}
 
@@ -25,30 +45,55 @@ func Load(paths ...string) (*Model, error) {
 }
 
 func loadEntry(model *Model, path string, d fs.DirEntry) error {
-	if d.IsDir() ||
-		isDropIn(path) ||
-		isTemplate(path) ||
-		isSymlink(path) {
+	info, err := d.Info()
+	if err != nil {
+		slog.Debug("Impossible to raad metadata. Ignored",
+			slog.String("path", path),
+			slog.Any("error", err),
+		)
 		return nil
 	}
 
-	switch kind(path) {
+	isDir := d.IsDir()
+	if info.Mode()&os.ModeSymlink != 0 {
+		resolvedPath, err := filepath.EvalSymlinks(path)
+		if err != nil {
+			slog.Debug("Link seems broken, ignored", slog.String("path", path))
+			return nil
+		}
+		resolvedInfo, err := os.Stat(resolvedPath)
+		if err != nil {
+			return nil
+		}
+		isDir = resolvedInfo.IsDir()
+	}
 
-	case PodKind:
+	if isDir || isDropIn(path) || isTemplate(path) {
+		return nil
+	}
+
+	ext := strings.ToLower(filepath.Ext(path))
+	baseName := filepath.Base(path)
+
+	switch ext {
+	case ".pod":
+		slog.Debug("Pod detected", slog.String("path", path))
 		model.Pods = append(model.Pods, Pod{
-			Name: strings.TrimSuffix(filepath.Base(path), ".pod"),
+			Name: strings.TrimSuffix(baseName, ext),
 			Path: path,
 		})
 
-	case ContainerKind:
+	case ".container":
+		slog.Debug("Container detected", slog.String("path", path))
 		model.Containers = append(model.Containers, Container{
-			Name: strings.TrimSuffix(filepath.Base(path), ".container"),
+			Name: strings.TrimSuffix(baseName, ext),
 			Path: path,
 		})
 
-	case VolumeKind:
+	case ".volume":
+		slog.Debug("Volume detected", slog.String("path", path))
 		model.Volumes = append(model.Volumes, Volume{
-			Name: strings.TrimSuffix(filepath.Base(path), ".volume"),
+			Name: strings.TrimSuffix(baseName, ext),
 			Path: path,
 		})
 	}
