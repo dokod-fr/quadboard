@@ -1,43 +1,39 @@
-# Build
+# syntax=docker/dockerfile:1
+# stage 1: Builder
 FROM golang:1.26-alpine AS builder
 
-WORKDIR /src
-
-COPY go.mod go.sum ./
-RUN go mod download
-
-COPY . .
-
-RUN --mount=type=cache,target=/go/pkg/mod \
-    --mount=type=cache,target=/root/.cache/go-build \
-    CGO_ENABLED=0 GOOS=linux \
-    go build -trimpath -ldflags="-s -w" \
-    -o /quadboard ./cmd/quadboard
-
-# Runtime
-FROM alpine:3.22
-
-RUN apk add --no-cache ca-certificates
-
-LABEL org.opencontainers.image.title="QuadBoard"
-LABEL org.opencontainers.image.description="Dashboard for Quadlet resources"
-LABEL org.opencontainers.image.source="https://github.com/dokod-fr/quadboard"
-LABEL org.opencontainers.image.licenses="GPLv3"
+# Install dependencies to build
+RUN go install github.com/go-task/task/v3/cmd/task@latest \
+    && go install github.com/a-h/templ/cmd/templ@latest
 
 WORKDIR /app
 
-RUN adduser -D -u 1001 quadboard
+# Cache Go modules
+COPY go.mod go.sum ./
+RUN --mount=type=cache,target=/go/pkg/mod go mod download
 
-RUN mkdir -p /etc/quadboard && \
-    chown quadboard:quadboard /etc/quadboard
-    
-COPY --from=builder /quadboard /app/quadboard
+COPY . .
 
-USER quadboard
+# Variable definition from GitHub Actions
+ARG VERSION=dev
+ARG COMMIT=unknown
+ARG DATE=unknown
+
+# On lance la compilation via Task en injectant nos variables d'environnement.
+# BuildKit va utiliser le cache Go et le cache des modules.
+RUN --mount=type=cache,target=/go/pkg/mod \
+    --mount=type=cache,target=/root/.cache/go-build \
+    VERSION=${VERSION} COMMIT=${COMMIT} DATE=${DATE} task release
+
+# stage 2: Final runner image
+FROM alpine:3.20
+
+RUN apk add --no-cache ca-certificates tzdata
+
+# Le binaire a été généré par Task dans "./bin/quadboard"
+COPY --from=builder /app/bin/quadboard /usr/local/bin/quadboard
 
 EXPOSE 8080
 
-HEALTHCHECK --interval=30s --timeout=3s \
-  CMD wget -qO- http://127.0.0.1:8080/health || exit 1
-
-ENTRYPOINT ["/app/quadboard", "serve"]
+ENTRYPOINT ["/usr/local/bin/quadboard"]
+CMD ["serve"]
