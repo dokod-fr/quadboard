@@ -18,6 +18,7 @@ You can specify a custom path for the configuration file by setting the QUADBOAR
 Example config.yaml
 
 ```yml
+base_url: "https://quadboard.example.com"
 server:
   address: "0.0.0.0:8080"
   read_timeout: 5
@@ -38,18 +39,24 @@ auth:
     issuer: "https://auth.example.com"
     client_id: "quadboard"
     client_secret: "super-secret"
-    redirect_url: "https://quadboard.example.com/auth/callback"
 ```
 
 ## Environment Variables
 
 All environment variables start with the QUADBOARD_ prefix.
 
-### Server Configuration
+### General Configuration
 
 | Variable                      | Description               | Default                |
 |-------------------------------|---------------------------|------------------------|	
 | QUADBOARD_CONFIG_FILE	        | Path to a custom YAML configuration file.        |	(Checks for config.yaml next to the binary) |
+| QUADBOARD_BASE_URL	 | The base URL QuadBoard will use (needed for OIDC redirect URL configuration). |	(Empty) |
+
+
+### Server Configuration
+
+| Variable                      | Description               | Default                |
+|-------------------------------|---------------------------|------------------------|	
 | QUADBOARD_SERVER_ADDRESS	    | The address and port the HTTP server listens on. |	0.0.0.0:8080 |
 | QUADBOARD_SERVER_READ_TIMEOUT	| HTTP read timeout in seconds.                    |	5  |
 | QUADBOARD_SERVER_WRITE_TIMEOUT|	HTTP write timeout in seconds.                   | 10  |
@@ -78,7 +85,6 @@ All environment variables start with the QUADBOARD_ prefix.
 | QUADBOARD_AUTH_OIDC_ISSUER	       | The issuer URL of your OIDC provider (e.g., Authelia, Authentik). | (Empty - Auth disabled) |
 | QUADBOARD_AUTH_OIDC_CLIENT_ID	     | The Client ID configured in your OIDC provider.	| (Empty) |
 | QUADBOARD_AUTH_OIDC_CLIENT_SECRET	 | The Client Secret configured in your OIDC provider. |	(Empty) |
-| QUADBOARD_AUTH_OIDC_REDIRECT_URL	 | The callback URL QuadBoard will use (must match the OIDC provider config). |	(Empty) |
 | QUADBOARD_AUTH_SECURE | Set to false to allow session cookies over plain HTTP (for local dev only). | true |
 
 

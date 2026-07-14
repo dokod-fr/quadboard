@@ -11,6 +11,7 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
+	"net/url"
 	"strings"
 	"time"
 
@@ -32,10 +33,15 @@ type Session struct {
 	Email    string   `json:"email"`
 }
 
-func NewOIDC(ctx context.Context, issuer, clientID, clientSecret, redirectURL, secretKey string, secure bool) (*OIDC, error) {
+func NewOIDC(ctx context.Context, issuer, clientID, clientSecret, baseURL, secretKey string, secure bool) (*OIDC, error) {
 	provider, err := createProvider(ctx, issuer)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create OIDC provider: %w", err)
+	}
+
+	redirectURL, err := GetOIDCRedirectURL(baseURL)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create OIDC redirectURL: %w", err)
 	}
 
 	oauth2Config := &oauth2.Config{
@@ -55,6 +61,17 @@ func NewOIDC(ctx context.Context, issuer, clientID, clientSecret, redirectURL, s
 		secretKey:    []byte(secretKey),
 		secure:       secure,
 	}, nil
+}
+
+func GetOIDCRedirectURL(baseURL string) (string, error) {
+	u, err := url.Parse(baseURL)
+	if err != nil {
+		return "", fmt.Errorf("invalid base_url: %w", err)
+	}
+
+	u = u.JoinPath("/auth/callback")
+
+	return u.String(), nil
 }
 
 func createProvider(ctx context.Context, issuer string) (*oidc.Provider, error) {

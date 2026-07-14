@@ -1,6 +1,7 @@
 package config
 
 type Config struct {
+	BaseURL   string          `yaml:"base_url"`
 	Server    ServerConfig    `yaml:"server"`
 	Logging   LoggingConfig   `yaml:"logging"`
 	Providers ProvidersConfig `yaml:"providers"`
@@ -36,5 +37,4 @@ type OIDCConfig struct {
 	Issuer       string `yaml:"issuer"`
 	ClientID     string `yaml:"client_id"`
 	ClientSecret string `yaml:"client_secret"`
-	RedirectURL  string `yaml:"redirect_url"`
 }

@@ -59,7 +59,7 @@ func Run(cmd *cobra.Command, args []string) error {
 			cfg.Auth.OIDC.Issuer,
 			cfg.Auth.OIDC.ClientID,
 			cfg.Auth.OIDC.ClientSecret,
-			cfg.Auth.OIDC.RedirectURL,
+			cfg.BaseURL,
 			cfg.Auth.SecretKey,
 			cfg.Auth.Secure,
 		)

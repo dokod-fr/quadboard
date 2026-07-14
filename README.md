@@ -78,10 +78,11 @@ PublishPort=8080:8080
 # Or the place 
 Volume=/etc/containers/systemd:/etc/containers/systemd:ro
 
+Environment=BASE_URL=https://auth.example.com
+
 # OIDC config
 Environment=QUADBOARD_AUTH_OIDC_ISSUER=https://auth.example.com/realms/homelab
 Environment=QUADBOARD_AUTH_OIDC_CLIENT_ID=quadboard
-Environment=QUADBOARD_AUTH_OIDC_REDIRECT_URL=https://auth.example.com/callback
 
 Secret=oidc_client_secret,type=env,target=QUADBOARD_AUTH_OIDC_CLIENT_SECRET
 Secret=session_secret,type=env,target=QUADBOARD_AUTH_SECRET_KEY

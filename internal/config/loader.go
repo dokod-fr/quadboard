@@ -58,6 +58,9 @@ func resolveConfigPath() string {
 }
 
 func applyEnvVars(cfg *Config) {
+	if val, ok := os.LookupEnv("QUADBOARD_BASE_URL"); ok {
+		cfg.BaseURL = strings.TrimSuffix(val, "/") // Optionnel : nettoie le slash final
+	}
 	if val, ok := os.LookupEnv("QUADBOARD_SERVER_ADDRESS"); ok {
 		cfg.Server.Address = val
 	}
@@ -112,9 +115,6 @@ func applyEnvVars(cfg *Config) {
 		}
 		if val, ok := os.LookupEnv("QUADBOARD_AUTH_OIDC_CLIENT_SECRET"); ok {
 			cfg.Auth.OIDC.ClientSecret = val
-		}
-		if val, ok := os.LookupEnv("QUADBOARD_AUTH_OIDC_REDIRECT_URL"); ok {
-			cfg.Auth.OIDC.RedirectURL = val
 		}
 	}
 }

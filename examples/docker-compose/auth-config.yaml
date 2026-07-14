@@ -1,3 +1,4 @@
+base_url: "http://domain.local:8081"
 logging:
   level: debug
 #providers:
@@ -11,4 +12,3 @@ auth:
     issuer: "http://domain.local:8080/realms/quadboard"
     client_id: "quadboard"
     client_secret: "super-secret"
-    redirect_url: "http://domain.local:8081/auth/callback"
