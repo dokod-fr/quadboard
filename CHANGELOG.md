@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.1](https://github.com/dokod-fr/quadboard/compare/v2.0.0...v2.0.1) (2026-07-14)
+
+
+### Bug Fixes
+
+* ci process to create release, docker and metadata. Dockerfile using taskfile ([1aedb05](https://github.com/dokod-fr/quadboard/commit/1aedb05fb67c7a44373a23975b7574fa314e70a2))
+
 ## [2.0.0](https://github.com/dokod-fr/quadboard/compare/v1.0.0...v2.0.0) (2026-07-14)
 
 
