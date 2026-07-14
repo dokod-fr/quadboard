@@ -18,9 +18,7 @@ services:
           - domain.local
 
   quadboard:
-    # image: ghcr.io/dokod-fr/quadboard:latest
-    build: 
-      context: ../..
+    image: quadboard:latest
     restart: unless-stopped
 
     ports:

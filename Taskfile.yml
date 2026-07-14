@@ -97,3 +97,28 @@ tasks:
     cmds:
       - templ generate ./...
       - go run ./cmd/quadboard serve
+
+  docker-build:
+    desc: Build the Docker image using BuildKit
+    env:
+      DOCKER_BUILDKIT: "1"
+    cmds:
+      - >
+        docker build
+        --build-arg VERSION={{.VERSION}}
+        --build-arg COMMIT={{.COMMIT}}
+        --build-arg DATE={{.DATE}}
+        -t {{.APP_NAME}}:latest
+        .
+
+  docker-run:
+    desc: Build image and start the compose development environment
+    deps:
+      - docker-build
+    cmds:
+      - docker compose -f examples/docker-compose/docker-compose.yml up -d
+
+  docker-stop:
+    desc: Stop the compose development environment
+    cmds:
+      - docker compose -f examples/docker-compose/docker-compose.yml down

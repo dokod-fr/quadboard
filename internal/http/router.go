@@ -19,21 +19,28 @@ func NewRouter(discovery *app.Discovery, oidc *auth.OIDC) http.Handler {
 	r.Get("/health", handlers.ServeHealth)
 	r.Get("/version", handlers.ServeVersion)
 
-	// Manage assets
-	assetsFS, err := fs.Sub(view.FS(), "assets")
-	if err != nil {
-		panic(err) // This should never happen since the assets directory is embedded
-	}
+	// --- Assets ---
+	assetsFS, _ := fs.Sub(view.FS(), "assets") // Error should never happen since the assets directory is embedded
 
 	r.Handle(
 		"/assets/*",
-		http.StripPrefix(
+		middleware.StaticAssetsMiddleware(http.StripPrefix(
 			"/assets/",
 			http.FileServer(http.FS(assetsFS)),
-		),
+		)),
 	)
 
-	// --- Authentification configuration ---
+	// --- API routes ---
+	r.Route("/api/v1", func(r chi.Router) {
+		// TODO: API serve
+		// r.Post("/token", api.CreateToken)
+		// r.Get("/resources", api.ListResources)
+		// r.Post("/resources/{id}/start", api.StartResource)
+	})
+
+	// --- Protected routes ---
+	homeHandler := handlers.NewHomeHandler(discovery)
+
 	if oidc != nil {
 		// This route is only used for OIDC login and callback, so we don't need to protect it with the AuthMiddleware
 		r.Get("/login", oidc.LoginHandler)
@@ -44,11 +51,11 @@ func NewRouter(discovery *app.Discovery, oidc *auth.OIDC) http.Handler {
 			r.Use(middleware.AuthMiddleware(oidc))
 
 			// UI routes
-			r.Get("/", handlers.NewHomeHandler(discovery).Serve)
+			r.Get("/", homeHandler.Serve)
 		})
 	} else {
 		// Fallback to no authentication, all routes are public
-		r.Get("/", handlers.NewHomeHandler(discovery).Serve)
+		r.Get("/", homeHandler.Serve)
 	}
 
 	return r
