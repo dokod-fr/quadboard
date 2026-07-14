@@ -1,5 +1,23 @@
 # Changelog
 
+## [2.0.0](https://github.com/dokod-fr/quadboard/compare/v1.0.0...v2.0.0) (2026-07-14)
+
+
+### ⚠ BREAKING CHANGES
+
+* Issue #14 Use base URL instead of Redirect URL
+
+### Features
+
+* **auth:** Add retries on connection with OIDC ([c89dffb](https://github.com/dokod-fr/quadboard/commit/c89dffb4e728dd1f65ad5bc914c0b749e879f9be))
+* Issue [#14](https://github.com/dokod-fr/quadboard/issues/14) Use base URL instead of Redirect URL ([bfdb76f](https://github.com/dokod-fr/quadboard/commit/bfdb76f41e49266d84c97e9af412e48c221d3f33))
+
+
+### Bug Fixes
+
+* [#1](https://github.com/dokod-fr/quadboard/issues/1) default look-for directory for quadlet ([4e60bd7](https://github.com/dokod-fr/quadboard/commit/4e60bd778afa95d9feef7911922afff8ab11d482))
+* issue [#13](https://github.com/dokod-fr/quadboard/issues/13) default quadlet dirs to look-for ([6eead5a](https://github.com/dokod-fr/quadboard/commit/6eead5abba517ea7c14233a16c53d0c90783b72d))
+
 ## 1.0.0 (2026-07-13)
 
 
