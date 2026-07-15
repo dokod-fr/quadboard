@@ -31,6 +31,7 @@ type Session struct {
 	Username string   `json:"username"`
 	Groups   []string `json:"groups"`
 	Email    string   `json:"email"`
+	Source   string   `json:"source"`
 }
 
 func NewOIDC(ctx context.Context, issuer, clientID, clientSecret, baseURL, secretKey string, secure bool) (*OIDC, error) {
