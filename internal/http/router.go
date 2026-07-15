@@ -7,8 +7,8 @@ import (
 	"github.com/dokod-fr/quadboard/internal/app"
 	"github.com/dokod-fr/quadboard/internal/auth"
 	"github.com/dokod-fr/quadboard/internal/http/handlers"
+	"github.com/dokod-fr/quadboard/internal/http/middleware"
 	"github.com/dokod-fr/quadboard/internal/http/view"
-	"github.com/dokod-fr/quadboard/internal/middleware"
 	"github.com/go-chi/chi/v5"
 )
 
