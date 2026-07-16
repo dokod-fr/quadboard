@@ -31,5 +31,5 @@ services:
       QUADBOARD_CONFIG_FILE: /etc/quadboard/config.yaml
 
     volumes:
-      - ./discovery:/etc/containers/systemd:ro
+      - ./registry:/etc/containers/systemd:ro
       - ./auth-config.yaml:/etc/quadboard/config.yaml:ro

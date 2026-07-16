@@ -6,7 +6,7 @@ import (
 )
 
 func TestLoad(t *testing.T) {
-	model, err := Load(filepath.Join("testdata", "discovery"))
+	model, err := Load(filepath.Join("testdata", "registry"))
 	if err != nil {
 		t.Fatalf("Load() returned error: %v", err)
 	}
@@ -25,7 +25,7 @@ func TestLoad(t *testing.T) {
 }
 
 func TestLoadNames(t *testing.T) {
-	model, err := Load(filepath.Join("testdata", "discovery"))
+	model, err := Load(filepath.Join("testdata", "registry"))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -40,7 +40,7 @@ func TestLoadNames(t *testing.T) {
 }
 
 func TestIgnoredTemplateContainer(t *testing.T) {
-	model, err := Load(filepath.Join("testdata", "discovery"))
+	model, err := Load(filepath.Join("testdata", "registry"))
 	if err != nil {
 		t.Fatal(err)
 	}

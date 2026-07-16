@@ -18,7 +18,7 @@ Its purpose is simple:
 
 The UI never knows where a Resource comes from.
 
-### Discovery is separate from presentation
+### ProviderRegistry is separate from presentation
 
 Providers discover.
 

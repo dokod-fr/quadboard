@@ -1,10 +1,10 @@
 # Kind of Roadmap 
 
-# v 0.1.0 Discovery
+# v 0.1.0 ProviderRegistry
 
 ✅ HTTP server
 ✅ Templates & assets
-✅ Discovery service
+✅ ProviderRegistry service
 ✅ Quadlet loader
 ✅ Quadlet parser
 ✅ Quadlet builder

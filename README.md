@@ -12,7 +12,7 @@ No database. No manual dashboard configuration. No duplicated metadata.
 
 ## Features
 
-* Automatic discovery of Podman Quadlets
+* Automatic ProviderRegistry of Podman Quadlets
 * Automatic service metadata detection
 * Responsive web interface
 * OIDC authentication support
@@ -29,7 +29,7 @@ No database. No manual dashboard configuration. No duplicated metadata.
 
 QuadBoard is functional and actively evolving. The current release includes:
 
-* Podman Quadlet discovery
+* Podman Quadlet ProviderRegistry
 * Web dashboard
 * Configuration management
 * OIDC authentication

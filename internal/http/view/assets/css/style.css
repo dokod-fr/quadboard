@@ -208,3 +208,57 @@ body {
     height: 48px;
     margin-bottom: 1rem;
 }
+
+/* --- Loading animation (Skeletons) --- */
+.card.skeleton {
+    pointer-events: none;
+}
+
+.skeleton-avatar {
+    width: 24px;
+    height: 24px;
+    border-radius: 6px;
+    background-color: var(--border-color);
+}
+
+.skeleton-line {
+    height: 12px;
+    background-color: var(--border-color);
+    border-radius: 4px;
+    animation: pulse 1.5s infinite ease-in-out;
+}
+
+.skeleton-line.title {
+    width: 120px;
+}
+
+.skeleton-line.desc {
+    margin-top: 0.75rem;
+    width: 100%;
+}
+
+.skeleton-line.desc.short {
+    margin-top: 0.5rem;
+    width: 60%;
+}
+
+.skeleton-line.badge {
+    width: 50px;
+    height: 16px;
+}
+
+.skeleton-line.link {
+    width: 60px;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 0.6;
+    }
+    50% {
+        opacity: 0.3;
+    }
+    100% {
+        opacity: 0.6;
+    }
+}

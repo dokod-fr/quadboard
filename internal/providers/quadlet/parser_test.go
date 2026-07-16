@@ -6,7 +6,7 @@ import (
 )
 
 func TestParse(t *testing.T) {
-	model, err := Load(filepath.Join("testdata", "discovery"))
+	model, err := Load(filepath.Join("testdata", "registry"))
 	if err != nil {
 		t.Fatal(err)
 	}

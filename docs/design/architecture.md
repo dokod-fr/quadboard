@@ -73,7 +73,7 @@ The application orchestrates providers.
 Current service:
 
 ```
-Discovery
+ProviderRegistry
 ```
 
 Responsibilities:
@@ -140,7 +140,7 @@ Build()
 
 ## Load
 
-Responsible for filesystem discovery.
+Responsible for filesystem ProviderRegistry.
 
 Produces a Model containing:
 
@@ -281,7 +281,7 @@ Implemented:
 - HTTP server
 - templ views
 - assets
-- discovery service
+- ProviderRegistry service
 - Quadlet loader
 - Quadlet parser
 - UnitFile parser

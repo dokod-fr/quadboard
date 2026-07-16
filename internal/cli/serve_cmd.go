@@ -46,11 +46,21 @@ func Run(cmd *cobra.Command, args []string) error {
 		slog.Int("write_timeout", cfg.Server.WriteTimeout))
 	logger.Info("Quadlet provider initialized", slog.Any("paths", cfg.Providers.Quadlet.Paths))
 
-	discovery := app.NewDiscovery(
+	// Initialize provider registry with Quadlet provider for now
+	providerRegistry := app.NewProviderRegistry(
 		quadlet.New(cfg.Providers.Quadlet.Paths...),
 	)
 
-	// Initialisation conditionnelle de l'OIDC
+	catalog := app.NewCatalog(providerRegistry)
+
+	// First refresh at start
+	logger.Info("Performing initial catalog scan...")
+	if err := catalog.Refresh(); err != nil {
+		logger.Warn("Initial catalog scan failed or completed with warnings", "error", err)
+	} else {
+		logger.Info("Catalog populated successfully", "resources_count", len(catalog.Resources()))
+	}
+
 	var oidcInstance *auth.OIDC
 	if cfg.Auth.OIDC != nil && cfg.Auth.OIDC.Issuer != "" {
 		logger.Info("Initializing OIDC authentication", "issuer", cfg.Auth.OIDC.Issuer)
@@ -70,7 +80,7 @@ func Run(cmd *cobra.Command, args []string) error {
 		logger.Info("Authentication disabled. All resources will be visible.")
 	}
 
-	router := http.NewRouter(discovery, oidcInstance)
+	router := http.NewRouter(catalog, oidcInstance)
 
 	server := http.NewServer(cfg, router)
 

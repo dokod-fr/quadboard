@@ -2,17 +2,17 @@ package app
 
 import "github.com/dokod-fr/quadboard/internal/domain"
 
-type Discovery struct {
+type ProviderRegistry struct {
 	providers []domain.Provider
 }
 
-func NewDiscovery(providers ...domain.Provider) *Discovery {
-	return &Discovery{
+func NewProviderRegistry(providers ...domain.Provider) *ProviderRegistry {
+	return &ProviderRegistry{
 		providers: providers,
 	}
 }
 
-func (s *Discovery) Resources() ([]domain.Resource, error) {
+func (s *ProviderRegistry) Resources() ([]domain.Resource, error) {
 	var resources []domain.Resource
 
 	for _, provider := range s.providers {

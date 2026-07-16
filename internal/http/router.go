@@ -12,7 +12,7 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-func NewRouter(discovery *app.Discovery, oidc *auth.OIDC) http.Handler {
+func NewRouter(catalog *app.Catalog, oidc *auth.OIDC) http.Handler {
 	r := chi.NewRouter()
 
 	// --- Public routes ---
@@ -20,7 +20,8 @@ func NewRouter(discovery *app.Discovery, oidc *auth.OIDC) http.Handler {
 	r.Get("/version", handlers.ServeVersion)
 
 	// --- Assets ---
-	assetsFS, _ := fs.Sub(view.FS(), "assets") // Error should never happen since the assets directory is embedded
+	// Error should never happen since the assets directory is embedded
+	assetsFS, _ := fs.Sub(view.FS(), "assets")
 
 	r.Handle(
 		"/assets/*",
@@ -31,7 +32,10 @@ func NewRouter(discovery *app.Discovery, oidc *auth.OIDC) http.Handler {
 	)
 
 	// --- API routes ---
+	catalogHandler := handlers.NewCatalogHandler(catalog)
+
 	r.Route("/api/v1", func(r chi.Router) {
+		r.Get("/catalog", catalogHandler.Serve)
 		// TODO: API serve
 		// r.Post("/token", api.CreateToken)
 		// r.Get("/resources", api.ListResources)
@@ -39,7 +43,7 @@ func NewRouter(discovery *app.Discovery, oidc *auth.OIDC) http.Handler {
 	})
 
 	// --- Protected routes ---
-	homeHandler := handlers.NewHomeHandler(discovery)
+	homeHandler := handlers.NewHomeHandler()
 
 	if oidc != nil {
 		// This route is only used for OIDC login and callback, so we don't need to protect it with the AuthMiddleware
