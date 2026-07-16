@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.1.0](https://github.com/dokod-fr/quadboard/compare/v2.0.1...v2.1.0) (2026-07-16)
+
+
+### Features
+
+* **auth:** Add Authelia header to bypass authentification ([bad8946](https://github.com/dokod-fr/quadboard/commit/bad8946291bdd09f2aa46cd0ba0549f1d702f876))
+* Create Catalog resource to accelerate page loading and prepare SSE refresh ([fc768ac](https://github.com/dokod-fr/quadboard/commit/fc768ac4e6446e20eb84480fa3fb0217363234e9))
+
 ## [2.0.1](https://github.com/dokod-fr/quadboard/compare/v2.0.0...v2.0.1) (2026-07-14)
 
 
