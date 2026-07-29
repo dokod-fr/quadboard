@@ -1,5 +1,20 @@
 # Changelog
 
+## [2.1.0](https://github.com/dokod-fr/quadboard/compare/v2.0.1...v2.1.0) (2026-07-29)
+
+
+### Features
+
+* **auth:** Add Authelia header to bypass authentification ([bad8946](https://github.com/dokod-fr/quadboard/commit/bad8946291bdd09f2aa46cd0ba0549f1d702f876))
+* Create Catalog resource to accelerate page loading and prepare SSE refresh ([fc768ac](https://github.com/dokod-fr/quadboard/commit/fc768ac4e6446e20eb84480fa3fb0217363234e9))
+* **quadlet:** Don't show itself by default & don't show template ([07b564b](https://github.com/dokod-fr/quadboard/commit/07b564babfbae92b8826d94d502ae78b940c4095))
+* **ui:** Add search bar, logo and favicon ([05272cd](https://github.com/dokod-fr/quadboard/commit/05272cd0d7903916981457ba812cf961b2ef125d))
+
+
+### Bug Fixes
+
+* **doc:** Update README.md ([cfee5e1](https://github.com/dokod-fr/quadboard/commit/cfee5e13bd81db6a9ba5642fff56f43a016a38a6))
+
 ## [2.0.1](https://github.com/dokod-fr/quadboard/compare/v2.0.0...v2.0.1) (2026-07-14)
 
 
