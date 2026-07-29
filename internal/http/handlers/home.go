@@ -5,16 +5,26 @@ import (
 	"html/template"
 	"log/slog"
 	"net/http"
+	"sort"
 
+	"github.com/dokod-fr/quadboard/internal/app"
 	"github.com/dokod-fr/quadboard/internal/auth"
+	"github.com/dokod-fr/quadboard/internal/domain"
 	"github.com/dokod-fr/quadboard/internal/http/view"
 )
 
-type HomeHandler struct {
-	tmpl *template.Template
+// ResourceGroup to group by category
+type ResourceGroup struct {
+	Name      string
+	Resources []domain.Resource
 }
 
-func NewHomeHandler() *HomeHandler {
+type HomeHandler struct {
+	catalog *app.Catalog
+	tmpl    *template.Template
+}
+
+func NewHomeHandler(catalog *app.Catalog) *HomeHandler {
 	tmpl := template.Must(
 		template.ParseFS(view.FS(),
 			"templates/layout.html",
@@ -23,47 +33,71 @@ func NewHomeHandler() *HomeHandler {
 	)
 
 	return &HomeHandler{
-		tmpl: tmpl,
+		catalog: catalog,
+		tmpl:    tmpl,
 	}
 }
 
 func (h *HomeHandler) Serve(w http.ResponseWriter, r *http.Request) {
+	resources := h.catalog.Resources()
+
+	// --- Groupment ---
+	groupsMap := make(map[string][]domain.Resource)
+	var groupNames []string
+
+	for _, res := range resources {
+		groupName := res.Group
+		if groupName == "" {
+			groupName = "Default"
+		}
+		if _, exists := groupsMap[groupName]; !exists {
+			groupNames = append(groupNames, groupName)
+		}
+		groupsMap[groupName] = append(groupsMap[groupName], res)
+	}
+
+	sort.Strings(groupNames)
+
+	viewGroups := make([]ResourceGroup, 0, len(groupNames))
+	for _, name := range groupNames {
+		viewGroups = append(viewGroups, ResourceGroup{
+			Name:      name,
+			Resources: groupsMap[name],
+		})
+	}
+
 	var username string
 	if session, ok := auth.SessionFromContext(r.Context()); ok {
 		username = session.Username
 	}
 
 	data := struct {
+		Groups   []ResourceGroup
 		Username string
 	}{
+		Groups:   viewGroups,
 		Username: username,
 	}
 
-	// 1. Rendu dans le buffer
+	// Buffering
 	buf := new(bytes.Buffer)
 	if err := h.tmpl.ExecuteTemplate(buf, "layout.html", data); err != nil {
 		slog.Error("Failed to render template layout.html", "error", err)
 
-		// 2. Au lieu de http.Error, on appelle notre helper HTML d'erreur
-		serveErrorPage(w, http.StatusInternalServerError, "Impossible de charger la page d'accueil.")
+		// Helper to show something in case something goes wron
+		serveErrorPage(w, http.StatusInternalServerError, "Failed to load index page.")
 		return
 	}
 
-	// Tout est OK, on envoie le résultat
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
 	_, _ = buf.WriteTo(w)
 }
 
-// serveErrorPage renvoie une page HTML d'erreur minimaliste mais propre,
-// stylisée directement, sans dépendre du système de templates externe.
 func serveErrorPage(w http.ResponseWriter, statusCode int, message string) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(statusCode)
 
-	// Un petit HTML "inline" propre avec un style CSS basique et moderne.
-	// Pas besoin de fichier externe, comme ça si l'embed FS ou le parseur a un problème,
-	// cette page fonctionnera TOUJOURS.
 	html := `
 	<!DOCTYPE html>
 	<html lang="fr">
