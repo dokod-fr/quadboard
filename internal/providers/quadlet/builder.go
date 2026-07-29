@@ -46,7 +46,7 @@ func Build(model *Model, cfg *config.QuadletConfig) ([]domain.Resource, error) {
 			Name:   pod.Name,
 			Health: domain.HealthUnknown,
 		}
-		// On utilise la description du Pod par défaut, puis on enrichit avec ses labels
+		// Description comes from pod first
 		res.Description = pod.Description
 		enrichResource(res, pod.Labels)
 
@@ -79,12 +79,11 @@ func Build(model *Model, cfg *config.QuadletConfig) ([]domain.Resource, error) {
 			continue
 		}
 
-		// Si la description du Pod est vide, on prend celle du conteneur
+		// If not found in Pod, it would be in container
 		if podRes.Description == "" && container.Description != "" {
 			podRes.Description = container.Description
 		}
 
-		// On enrichit le Pod avec les labels du conteneur (ex: Traefik est souvent sur le conteneur)
 		enrichResource(podRes, container.Labels)
 	}
 
@@ -101,8 +100,7 @@ func Build(model *Model, cfg *config.QuadletConfig) ([]domain.Resource, error) {
 	return list, nil
 }
 
-// enrichResource met à jour une ressource en se basant sur les labels fournis.
-// Les labels quadboard.* ont la priorité absolue.
+// Use Quadboard labels (first class citizen)
 func enrichResource(res *domain.Resource, labels map[string]string) {
 	if len(labels) == 0 {
 		return
@@ -122,7 +120,6 @@ func enrichResource(res *domain.Resource, labels map[string]string) {
 		res.Logo = val
 	}
 
-	// Description (Quadboard override > Podman standard)
 	if val, ok := labels["quadboard.description"]; ok {
 		res.Description = val
 	} else if res.Description == "" {
@@ -137,7 +134,7 @@ func enrichResource(res *domain.Resource, labels map[string]string) {
 	if val, ok := labels["quadboard.url"]; ok {
 		res.URL = val
 	} else if res.URL == "" {
-		// Recherche d'une règle Traefik si l'URL n'est pas déjà définie
+		// Use Traefik URL if presents
 		for key, value := range labels {
 			if strings.HasPrefix(key, "traefik.http.routers.") && strings.HasSuffix(key, ".rule") {
 				matches := traefikHostRegex.FindStringSubmatch(value)

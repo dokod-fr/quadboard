@@ -1,3 +1,17 @@
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="internal/http/view/assets/img/quadboard-bw.svg">
+    <source media="(prefers-color-scheme: light)" srcset="internal/http/view/assets/img/quadboard-color.svg">
+    <img alt="QuadBoard Logo" src="internal/http/view/assets/img/quadboard-color.svg" width="200">
+  </picture>
+</p>
+
+<h1 align="center">QuadBoard</h1>
+
+<p align="center">
+  Zero-config application portal for Podman Quadlets.
+</p>
+
 # QuadBoard
 
 > Zero-config application portal for Podman Quadlets.
@@ -12,10 +26,10 @@ No database. No manual dashboard configuration. No duplicated metadata.
 
 ## Features
 
-* Automatic ProviderRegistry of Podman Quadlets
-* Automatic service metadata detection
-* Responsive web interface
-* OIDC authentication support
+* Automatic discovery of Podman Quadlets
+* Automatic service metadata detection (Traefik routing, descritions, icons)
+* Responsive web interface (dark/light mode, search, grouped cards)
+* OIDC authentication support (Authelia, Keycloak, ...)
 * Configurable providers architecture
 * YAML configuration support
 * Environment variable overrides
@@ -29,7 +43,7 @@ No database. No manual dashboard configuration. No duplicated metadata.
 
 QuadBoard is functional and actively evolving. The current release includes:
 
-* Podman Quadlet ProviderRegistry
+* Podman Quadlet discovery
 * Web dashboard
 * Configuration management
 * OIDC authentication
@@ -78,7 +92,7 @@ PublishPort=8080:8080
 # Or the place 
 Volume=/etc/containers/systemd:/etc/containers/systemd:ro
 
-Environment=BASE_URL=https://auth.example.com
+Environment=QUADBOARD_BASE_URL=https://auth.example.com
 
 # OIDC config
 Environment=QUADBOARD_AUTH_OIDC_ISSUER=https://auth.example.com/realms/homelab
@@ -93,19 +107,29 @@ WantedBy=default.target
 
 ## Configuration
 
-QuadBoard supports:
+QuadBoard is designed to work out of the box with zero configuration. However, you can customize its behavior using environment variables or a YAML configuration file.
 
-* YAML configuration files
+### Server Configuration
+
+By default, QuadBoard listens on 0.0.0.0:8080 and automatically discovers Podman Quadlets in the standard directories (/etc/containers/systemd/ and ~/.config/containers/systemd/).
+
+You can override server settings (like address, timeouts, logging, or authentication) using:
+
+* YAML configuration file
 * Environment variables
 * Built-in defaults
 
-Configuration priority:
-
-1. Environment variables
-2. YAML configuration file
-3. Default values
-
 See: [Configuration](docs/configuration.md)
+
+### Service Discovery & Labels
+
+For the Quadlet provider, QuadBoard automatically detects services and extracts metadata (like URLs from Traefik routing rules or descriptions from standard container labels) to create dashboard cards.
+
+You can help QuadBoard accurately represent your applications by using specific quadboard.* labels in your .container or .pod files to define custom names, icons, logos, descriptions, and groups.
+
+Note: By default, QuadBoard hides its own container in the dashboard. You can disable this behavior by setting show_itself: true in your configuration.
+
+See: [Labels Documentation](docs/labels.md)
 
 ## Authentication
 
