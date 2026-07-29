@@ -87,9 +87,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 card.rel = 'noopener noreferrer';
                 card.className = `card ${!app.URL ? 'disabled' : ''}`;
 
-                let mediaHTML = app.Logo 
-                    ? `<img src="${app.Logo}" alt="${app.Name}" class="card-logo">` 
-                    : `<i data-lucide="${app.Icon || 'box'}" class="card-icon"></i>`;
+                // --- Logo management and fallback ---
+                let mediaHTML = '';
+                if (app.Logo) {
+                    // If no image found (404 du CDN), show default image
+                    mediaHTML = `
+                        <img src="${app.Logo}" alt="${app.Name}" class="card-logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-block';">
+                        <i data-lucide="${app.Icon || 'box'}" class="card-icon" style="display: none;"></i>
+                    `;
+                } else {
+                    mediaHTML = `<i data-lucide="${app.Icon || 'box'}" class="card-icon"></i>`;
+                }
+
                 let descriptionHTML = app.Description ? `<p class="card-desc">${app.Description}</p>` : '';
                 let openText = app.URL 
                     ? `Open <i data-lucide="external-link" style="width:12px; height:12px; display:inline-block; margin-left:2px;"></i>` 

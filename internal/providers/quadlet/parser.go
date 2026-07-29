@@ -45,6 +45,7 @@ func parseContainer(c *Container) error {
 
 	c.Name = file.Section("Container").First("ContainerName")
 	c.Description = file.Section("Unit").First("Description")
+	c.Image = file.Section("Container").First("Image")
 
 	if pod := file.Section("Container").First("Pod"); pod != "" {
 		c.Pod = strings.TrimSuffix(pod, ".pod")

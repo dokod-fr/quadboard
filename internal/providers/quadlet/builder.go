@@ -1,6 +1,8 @@
 package quadlet
 
 import (
+	"fmt"
+	"log/slog"
 	"regexp"
 	"sort"
 	"strings"
@@ -13,7 +15,7 @@ import (
 var traefikHostRegex = regexp.MustCompile("Host\\(`([^`]+)`\\)")
 
 /*
- * ==== Utility functions
+ * ==== Utility functions =======
  */
 
 // shouldIgnore determine if container or pod should be ignored
@@ -32,6 +34,23 @@ func shouldIgnore(name string, labels map[string]string, showItSelf bool) bool {
 	return false
 }
 
+func guessLogoFromImage(image string) string {
+	if image == "" {
+		return ""
+	}
+
+	baseImage := strings.Split(image, ":")[0]
+	parts := strings.Split(baseImage, "/")
+	appName := parts[len(parts)-1]
+	appName = strings.ToLower(appName)
+
+	url := fmt.Sprintf("https://cdn.simpleicons.org/%s", appName)
+	slog.Debug("Simple Icons Url", slog.String("url", url))
+	return url
+}
+
+/* ======= End utility functions ======== */
+
 func Build(model *Model, cfg *config.QuadletConfig) ([]domain.Resource, error) {
 	resources := make(map[string]*domain.Resource)
 
@@ -48,7 +67,8 @@ func Build(model *Model, cfg *config.QuadletConfig) ([]domain.Resource, error) {
 		}
 		// Description comes from pod first
 		res.Description = pod.Description
-		enrichResource(res, pod.Labels)
+
+		enrichResource(res, pod.Labels, "")
 
 		resources[pod.Name] = res
 	}
@@ -60,6 +80,7 @@ func Build(model *Model, cfg *config.QuadletConfig) ([]domain.Resource, error) {
 			continue
 		}
 
+		// Case: container standalone
 		if container.Pod == "" {
 			res := &domain.Resource{
 				ID:     container.Name,
@@ -67,7 +88,7 @@ func Build(model *Model, cfg *config.QuadletConfig) ([]domain.Resource, error) {
 				Health: domain.HealthUnknown,
 			}
 			res.Description = container.Description
-			enrichResource(res, container.Labels)
+			enrichResource(res, container.Labels, container.Image)
 
 			resources[container.Name] = res
 			continue
@@ -84,11 +105,15 @@ func Build(model *Model, cfg *config.QuadletConfig) ([]domain.Resource, error) {
 			podRes.Description = container.Description
 		}
 
-		enrichResource(podRes, container.Labels)
+		img := ""
+		if podRes.Logo == "" && podRes.Icon == "" {
+			img = container.Image
+		}
+
+		enrichResource(podRes, container.Labels, img)
 	}
 
 	list := make([]domain.Resource, 0, len(resources))
-
 	for _, resource := range resources {
 		list = append(list, *resource)
 	}
@@ -101,25 +126,27 @@ func Build(model *Model, cfg *config.QuadletConfig) ([]domain.Resource, error) {
 }
 
 // Use Quadboard labels (first class citizen)
-func enrichResource(res *domain.Resource, labels map[string]string) {
-	if len(labels) == 0 {
-		return
-	}
-
-	// Group
+func enrichResource(res *domain.Resource, labels map[string]string, image string) {
+	// 1. Group
 	if val, ok := labels["quadboard.group"]; ok {
 		res.Group = val
 	}
 
-	// Icon / Logo
+	// 2. Icon
 	if val, ok := labels["quadboard.icon"]; ok {
 		res.Icon = val
 	}
 
+	// 3. Logo (Quadboard > Auto-guess via SimpleIcons)
 	if val, ok := labels["quadboard.logo"]; ok {
 		res.Logo = val
+	} else if res.Icon == "" && res.Logo == "" {
+		if guessedLogo := guessLogoFromImage(image); guessedLogo != "" {
+			res.Logo = guessedLogo
+		}
 	}
 
+	// 4. Description
 	if val, ok := labels["quadboard.description"]; ok {
 		res.Description = val
 	} else if res.Description == "" {
@@ -130,11 +157,10 @@ func enrichResource(res *domain.Resource, labels map[string]string) {
 		}
 	}
 
-	// URL
+	// 5. URL
 	if val, ok := labels["quadboard.url"]; ok {
 		res.URL = val
 	} else if res.URL == "" {
-		// Use Traefik URL if presents
 		for key, value := range labels {
 			if strings.HasPrefix(key, "traefik.http.routers.") && strings.HasSuffix(key, ".rule") {
 				matches := traefikHostRegex.FindStringSubmatch(value)

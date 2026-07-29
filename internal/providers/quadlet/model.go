@@ -20,6 +20,7 @@ type Container struct {
 	Path        string
 	Description string
 	Pod         string
+	Image       string
 	Labels      map[string]string
 }
 
