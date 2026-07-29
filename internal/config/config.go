@@ -24,7 +24,8 @@ type ProvidersConfig struct {
 }
 
 type QuadletConfig struct {
-	Paths []string `yaml:"paths"`
+	Paths      []string `yaml:"paths"`
+	ShowItSelf bool     `yaml:"show_self"` // show it self
 }
 
 type AuthConfig struct {

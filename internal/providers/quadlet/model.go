@@ -7,7 +7,7 @@ type Model struct {
 }
 
 type Pod struct {
-	Name        string // Nom logique
+	Name        string // Logic nme
 	Filename    string // nextcloud
 	Path        string
 	Description string
@@ -15,7 +15,7 @@ type Pod struct {
 }
 
 type Container struct {
-	Name        string // Nom logique
+	Name        string // Logic name
 	Filename    string // nextcloud-app
 	Path        string
 	Description string

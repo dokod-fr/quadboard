@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/dokod-fr/quadboard/internal/config"
 	"github.com/dokod-fr/quadboard/internal/domain"
 )
 
@@ -17,7 +18,7 @@ func TestBuild(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	resources, err := Build(model)
+	resources, err := Build(model, &config.QuadletConfig{})
 	if err != nil {
 		t.Fatal(err)
 	}

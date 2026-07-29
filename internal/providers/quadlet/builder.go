@@ -5,17 +5,42 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/dokod-fr/quadboard/internal/config"
 	"github.com/dokod-fr/quadboard/internal/domain"
 )
 
 // traefikHostRegex extracts the domain from a Traefik rule: Host(`example.com`)
 var traefikHostRegex = regexp.MustCompile("Host\\(`([^`]+)`\\)")
 
-func Build(model *Model) ([]domain.Resource, error) {
+/*
+ * ==== Utility functions
+ */
+
+// shouldIgnore determine if container or pod should be ignored
+func shouldIgnore(name string, labels map[string]string, showItSelf bool) bool {
+	// Ignore Quadlet templates  mean container which name least with '@'
+	if strings.Contains(name, "@") {
+		return true
+	}
+
+	// Ignore QuadBoard container/pod if asking
+	isQuadboard := strings.EqualFold(name, "quadboard") || strings.Contains(strings.ToLower(name), "quadboard")
+	if isQuadboard && !showItSelf {
+		return true
+	}
+
+	return false
+}
+
+func Build(model *Model, cfg *config.QuadletConfig) ([]domain.Resource, error) {
 	resources := make(map[string]*domain.Resource)
 
 	// Every Pod becomes a Resource.
 	for _, pod := range model.Pods {
+		if shouldIgnore(pod.Name, pod.Labels, cfg.ShowItSelf) {
+			continue
+		}
+
 		res := &domain.Resource{
 			ID:     pod.Name,
 			Name:   pod.Name,
@@ -31,6 +56,10 @@ func Build(model *Model) ([]domain.Resource, error) {
 	// Standalone containers become Resources.
 	// Containers belonging to a Pod enrich the Pod Resource.
 	for _, container := range model.Containers {
+		if shouldIgnore(container.Name, container.Labels, cfg.ShowItSelf) {
+			continue
+		}
+
 		if container.Pod == "" {
 			res := &domain.Resource{
 				ID:     container.Name,

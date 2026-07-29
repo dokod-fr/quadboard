@@ -1,9 +1,13 @@
 package quadlet
 
-import "github.com/dokod-fr/quadboard/internal/domain"
+import (
+	"github.com/dokod-fr/quadboard/internal/config"
+	"github.com/dokod-fr/quadboard/internal/domain"
+)
 
 type Provider struct {
 	paths []string
+	cfg   config.QuadletConfig
 }
 
 func New(paths ...string) *Provider {
@@ -22,5 +26,5 @@ func (p *Provider) Resources() ([]domain.Resource, error) {
 		return nil, err
 	}
 
-	return Build(model)
+	return Build(model, &p.cfg)
 }

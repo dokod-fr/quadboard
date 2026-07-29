@@ -90,6 +90,12 @@ func applyEnvVars(cfg *Config) {
 		cfg.Providers.Quadlet.Paths = paths
 	}
 
+	if val, ok := os.LookupEnv("QUADBOARD_QUADLET_SHOW_ITSELF"); ok {
+		if show, err := strconv.ParseBool(val); err == nil {
+			cfg.Providers.Quadlet.ShowItSelf = show
+		}
+	}
+
 	if val, ok := os.LookupEnv("QUADBOARD_AUTH_SECRET_KEY"); ok {
 		cfg.Auth.SecretKey = val
 	}

@@ -17,7 +17,8 @@ func defaultConfig() Config {
 		},
 		Providers: ProvidersConfig{
 			Quadlet: QuadletConfig{
-				Paths: quadletPaths,
+				Paths:      quadletPaths,
+				ShowItSelf: false, // Default, no show quadboard
 			},
 		},
 		Auth: AuthConfig{
