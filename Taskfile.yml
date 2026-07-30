@@ -14,14 +14,48 @@ vars:
   DATE:
     sh: date -u +"%Y-%m-%dT%H:%M:%SZ"
 
+  # Frontend variables
+  ESBUILD_VERSION: "0.20.2"
+  ESBUILD_BIN: "{{.BIN_DIR}}/esbuild"
+  WEB_SRC_DIR: "internal/web/src"
+  WEB_DIR: "internal/http/view/assets"
+  JS_SRC: "{{.WEB_SRC_DIR}}/js/app.js"
+  JS_MIN: "{{.WEB_DIR}}/js/app.min.js"
+  CSS_SRC: "{{.WEB_SRC_DIR}}/css/style.css"
+  CSS_MIN: "{{.WEB_DIR}}/css/style.min.css"
+
 tasks:
   default:
     desc: Show available tasks
     cmds:
       - task --list
 
+  tools:esbuild:
+    internal: true
+    status:
+      - test -f {{.ESBUILD_BIN}}
+    cmds:
+      - go install github.com/evanw/esbuild/cmd/esbuild@v{{.ESBUILD_VERSION}}
+      - mkdir -p {{.BIN_DIR}}
+      - mv $(go env GOPATH)/bin/esbuild {{.ESBUILD_BIN}}
+
+  build-frontend:
+    desc: Bundle and minify JS and CSS for production
+    deps: [tools:esbuild]
+    cmds:
+      - "{{.ESBUILD_BIN}} {{.JS_SRC}} --bundle --minify --format=iife --outfile={{.JS_MIN}}"
+      - "{{.ESBUILD_BIN}} {{.CSS_SRC}} --minify --outfile={{.CSS_MIN}}"
+
+  build-frontend-dev:
+    desc: Bundle JS and CSS for development (no minification)
+    deps: [tools:esbuild]
+    cmds:
+      - "{{.ESBUILD_BIN}} {{.JS_SRC}} --bundle --format=iife --outfile={{.JS_MIN}}"
+      - "{{.ESBUILD_BIN}} {{.CSS_SRC}} --outfile={{.CSS_MIN}}"
+
   build:
     desc: Build QuadBoard
+    deps: [build-frontend]
     cmds:
       - templ generate ./...
       - mkdir -p {{.BIN_DIR}}
@@ -43,8 +77,7 @@ tasks:
 
   run:
     desc: Run the application
-    deps:
-      - build
+    deps: [build]
     cmds:
       - ./{{.BIN_DIR}}/{{.APP_NAME}} serve
 
@@ -82,9 +115,11 @@ tasks:
       - go mod tidy
 
   clean:
+    desc: Clean build artifacts
     cmds:
-      - rm -rf bin
+      - rm -rf {{.BIN_DIR}}
       - find . -name "*_templ.go" -delete
+      - rm -f {{.JS_MIN}} {{.CSS_MIN}}
 
   check:
     desc: Run all verification tasks
@@ -94,6 +129,8 @@ tasks:
       - test
 
   dev:
+    desc: Run app in development mode (builds unminified frontend)
+    deps: [build-frontend-dev]
     cmds:
       - templ generate ./...
       - go run ./cmd/quadboard serve

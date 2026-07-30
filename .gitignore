@@ -30,6 +30,10 @@ coverage.out
 # Go - templates
 *_templ.go
 
+# Web
+internal/http/view/assets/js/*.min.js
+internal/http/view/assets/css/*.min.css
+
 # Nix
 result
 

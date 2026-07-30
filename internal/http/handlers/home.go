@@ -5,7 +5,6 @@ import (
 	"html/template"
 	"log/slog"
 	"net/http"
-	"sort"
 
 	"github.com/dokod-fr/quadboard/internal/app"
 	"github.com/dokod-fr/quadboard/internal/auth"
@@ -26,7 +25,7 @@ type HomeHandler struct {
 	config  *config.Config
 }
 
-func NewHomeHandler(catalog *app.Catalog, config *config.Config) *HomeHandler {
+func NewHomeHandler(config *config.Config) *HomeHandler {
 	tmpl := template.Must(
 		template.ParseFS(view.FS(),
 			"templates/layout.html",
@@ -35,39 +34,12 @@ func NewHomeHandler(catalog *app.Catalog, config *config.Config) *HomeHandler {
 	)
 
 	return &HomeHandler{
-		catalog: catalog,
-		tmpl:    tmpl,
-		config:  config,
+		tmpl:   tmpl,
+		config: config,
 	}
 }
 
 func (h *HomeHandler) Serve(w http.ResponseWriter, r *http.Request) {
-	resources := h.catalog.Resources()
-
-	// --- Groupment ---
-	groupsMap := make(map[string][]domain.Resource)
-	var groupNames []string
-
-	for _, res := range resources {
-		groupName := res.Group
-		if groupName == "" {
-			groupName = "Default"
-		}
-		if _, exists := groupsMap[groupName]; !exists {
-			groupNames = append(groupNames, groupName)
-		}
-		groupsMap[groupName] = append(groupsMap[groupName], res)
-	}
-
-	sort.Strings(groupNames)
-
-	viewGroups := make([]ResourceGroup, 0, len(groupNames))
-	for _, name := range groupNames {
-		viewGroups = append(viewGroups, ResourceGroup{
-			Name:      name,
-			Resources: groupsMap[name],
-		})
-	}
 
 	var username string
 	if session, ok := auth.SessionFromContext(r.Context()); ok {
