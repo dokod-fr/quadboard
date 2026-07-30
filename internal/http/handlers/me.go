@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"log/slog"
 	"net/http"
 
 	"github.com/dokod-fr/quadboard/internal/auth"
@@ -24,14 +23,6 @@ func (h *MeHandler) Serve(w http.ResponseWriter, r *http.Request) {
 		if session, ok := auth.SessionFromContext(r.Context()); ok {
 			username = session.Username
 		}
-	}
-
-	// On essaie juste de récupérer la session depuis le contexte
-	if session, ok := auth.SessionFromContext(r.Context()); ok {
-		slog.Warn("username", slog.String("username", session.Username))
-	} else {
-		// Si on voit ce log dans la console, c'est que le middleware n'a pas tourné
-		slog.Warn("Session not found in context for /api/v1/me")
 	}
 
 	response := struct {

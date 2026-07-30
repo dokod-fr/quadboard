@@ -63,6 +63,16 @@ func NewRouter(catalog *app.Catalog, oidc *auth.OIDC, config *config.Config) htt
 	} else {
 		// Fallback to no authentication, all routes are public
 		r.Get("/", homeHandler.Serve)
+
+		// --- API routes ---
+		r.Route("/api/v1", func(r chi.Router) {
+			r.Get("/catalog", catalogHandler.Serve)
+			r.Get("/me", meHandler.Serve)
+			// TODO: API serve
+			// r.Post("/token", api.CreateToken)
+			// r.Get("/resources", api.ListResources)
+			// r.Post("/resources/{id}/start", api.StartResource)
+		})
 	}
 
 	return r
