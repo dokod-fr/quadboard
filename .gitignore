@@ -31,8 +31,9 @@ coverage.out
 *_templ.go
 
 # Web
-internal/http/view/assets/js/*.min.js
-internal/http/view/assets/css/*.min.css
+internal/http/view/assets/*
+!internal/http/view/assets/**/.gitkeep
+node_modules/
 
 # Nix
 result

@@ -32,19 +32,10 @@ func NewRouter(catalog *app.Catalog, oidc *auth.OIDC, config *config.Config) htt
 		)),
 	)
 
-	// --- API routes ---
-	catalogHandler := handlers.NewCatalogHandler(catalog, config)
-
-	r.Route("/api/v1", func(r chi.Router) {
-		r.Get("/catalog", catalogHandler.Serve)
-		// TODO: API serve
-		// r.Post("/token", api.CreateToken)
-		// r.Get("/resources", api.ListResources)
-		// r.Post("/resources/{id}/start", api.StartResource)
-	})
-
 	// --- Protected routes ---
-	homeHandler := handlers.NewHomeHandler(config)
+	homeHandler := handlers.NewHomeHandler()
+	catalogHandler := handlers.NewCatalogHandler(catalog, config)
+	meHandler := handlers.NewMeHandler(config)
 
 	if oidc != nil {
 		// This route is only used for OIDC login and callback, so we don't need to protect it with the AuthMiddleware
@@ -57,6 +48,17 @@ func NewRouter(catalog *app.Catalog, oidc *auth.OIDC, config *config.Config) htt
 
 			// UI routes
 			r.Get("/", homeHandler.Serve)
+
+			// --- API routes ---
+			r.Route("/api/v1", func(r chi.Router) {
+				r.Get("/catalog", catalogHandler.Serve)
+				r.Get("/me", meHandler.Serve)
+				// TODO: API serve
+				// r.Post("/token", api.CreateToken)
+				// r.Get("/resources", api.ListResources)
+				// r.Post("/resources/{id}/start", api.StartResource)
+			})
+
 		})
 	} else {
 		// Fallback to no authentication, all routes are public

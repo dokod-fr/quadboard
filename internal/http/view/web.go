@@ -2,7 +2,7 @@ package view
 
 import "embed"
 
-//go:embed templates assets
+//go:embed index.html assets
 var files embed.FS
 
 // FS retourne le système de fichiers embarqué contenant les templates et les assets.

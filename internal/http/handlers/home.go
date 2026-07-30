@@ -1,72 +1,29 @@
 package handlers
 
 import (
-	"bytes"
-	"html/template"
 	"log/slog"
 	"net/http"
 
-	"github.com/dokod-fr/quadboard/internal/app"
-	"github.com/dokod-fr/quadboard/internal/auth"
-	"github.com/dokod-fr/quadboard/internal/config"
-	"github.com/dokod-fr/quadboard/internal/domain"
 	"github.com/dokod-fr/quadboard/internal/http/view"
 )
 
-// ResourceGroup to group by category
-type ResourceGroup struct {
-	Name      string
-	Resources []domain.Resource
-}
+type HomeHandler struct{}
 
-type HomeHandler struct {
-	catalog *app.Catalog
-	tmpl    *template.Template
-	config  *config.Config
-}
-
-func NewHomeHandler(config *config.Config) *HomeHandler {
-	tmpl := template.Must(
-		template.ParseFS(view.FS(),
-			"templates/layout.html",
-			"templates/home.html",
-		),
-	)
-
-	return &HomeHandler{
-		tmpl:   tmpl,
-		config: config,
-	}
+func NewHomeHandler() *HomeHandler {
+	return &HomeHandler{}
 }
 
 func (h *HomeHandler) Serve(w http.ResponseWriter, r *http.Request) {
-
-	var username string
-	if session, ok := auth.SessionFromContext(r.Context()); ok {
-		username = session.Username
-	}
-
-	data := struct {
-		Username       string
-		GroupByDefault bool
-	}{
-		Username:       username,
-		GroupByDefault: h.config.UI.GroupByDefault,
-	}
-
-	// Buffering
-	buf := new(bytes.Buffer)
-	if err := h.tmpl.ExecuteTemplate(buf, "layout.html", data); err != nil {
-		slog.Error("Failed to render template layout.html", "error", err)
-
-		// Helper to show something in case something goes wron
+	indexBytes, err := view.FS().ReadFile("index.html")
+	if err != nil {
+		slog.Error("Failed to read index.html", "error", err)
 		serveErrorPage(w, http.StatusInternalServerError, "Failed to load index page.")
 		return
 	}
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
-	_, _ = buf.WriteTo(w)
+	_, _ = w.Write(indexBytes)
 }
 
 func serveErrorPage(w http.ResponseWriter, statusCode int, message string) {

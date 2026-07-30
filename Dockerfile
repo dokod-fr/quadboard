@@ -2,16 +2,21 @@
 # stage 1: Builder
 FROM golang:1.26-alpine AS builder
 
-# Install dependencies to build
-RUN go install github.com/go-task/task/v3/cmd/task@latest \
-    && go install github.com/a-h/templ/cmd/templ@latest
-
+# Install dependencies to build (Task, Templ, Node.js pour Vite/Svelte)
+RUN apk add --no-cache nodejs npm \
+    && go install github.com/go-task/task/v3/cmd/task@latest 
+    
 WORKDIR /app
 
 # Cache Go modules
 COPY go.mod go.sum ./
 RUN --mount=type=cache,target=/go/pkg/mod go mod download
 
+# Cache Node modules pour le frontend Svelte
+COPY web/package.json web/package-lock.json* ./web/
+RUN cd web && npm install
+
+# Copy the rest of the source code
 COPY . .
 
 # Variable definition from GitHub Actions
@@ -19,8 +24,7 @@ ARG VERSION=dev
 ARG COMMIT=unknown
 ARG DATE=unknown
 
-# On lance la compilation via Task en injectant nos variables d'environnement.
-# BuildKit va utiliser le cache Go et le cache des modules.
+# Build
 RUN --mount=type=cache,target=/go/pkg/mod \
     --mount=type=cache,target=/root/.cache/go-build \
     VERSION=${VERSION} COMMIT=${COMMIT} DATE=${DATE} task release
@@ -30,7 +34,7 @@ FROM alpine:3.20
 
 RUN apk add --no-cache ca-certificates tzdata
 
-# Le binaire a été généré par Task dans "./bin/quadboard"
+# Binary in "./bin/quadboard"
 COPY --from=builder /app/bin/quadboard /usr/local/bin/quadboard
 
 EXPOSE 8080

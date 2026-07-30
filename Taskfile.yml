@@ -14,50 +14,27 @@ vars:
   DATE:
     sh: date -u +"%Y-%m-%dT%H:%M:%SZ"
 
-  # Frontend variables
-  ESBUILD_VERSION: "0.20.2"
-  ESBUILD_BIN: "{{.BIN_DIR}}/esbuild"
-  WEB_SRC_DIR: "internal/web/src"
-  WEB_DIR: "internal/http/view/assets"
-  JS_SRC: "{{.WEB_SRC_DIR}}/js/app.js"
-  JS_MIN: "{{.WEB_DIR}}/js/app.min.js"
-  CSS_SRC: "{{.WEB_SRC_DIR}}/css/style.css"
-  CSS_MIN: "{{.WEB_DIR}}/css/style.min.css"
-
 tasks:
   default:
     desc: Show available tasks
     cmds:
       - task --list
 
-  tools:esbuild:
-    internal: true
-    status:
-      - test -f {{.ESBUILD_BIN}}
-    cmds:
-      - go install github.com/evanw/esbuild/cmd/esbuild@v{{.ESBUILD_VERSION}}
-      - mkdir -p {{.BIN_DIR}}
-      - mv $(go env GOPATH)/bin/esbuild {{.ESBUILD_BIN}}
-
   build-frontend:
-    desc: Bundle and minify JS and CSS for production
-    deps: [tools:esbuild]
+    desc: Build Svelte frontend for production
     cmds:
-      - "{{.ESBUILD_BIN}} {{.JS_SRC}} --bundle --minify --format=iife --outfile={{.JS_MIN}}"
-      - "{{.ESBUILD_BIN}} {{.CSS_SRC}} --bundle --minify --outfile={{.CSS_MIN}}"
+      - cd web && npm run build
 
+      
   build-frontend-dev:
-    desc: Bundle JS and CSS for development (no minification)
-    deps: [tools:esbuild]
+    desc: Run Vite dev server (hot reload)
     cmds:
-      - "{{.ESBUILD_BIN}} {{.JS_SRC}} --bundle --format=iife --outfile={{.JS_MIN}}"
-      - "{{.ESBUILD_BIN}} {{.CSS_SRC}} --bundle --outfile={{.CSS_MIN}}"
+      - cd web && npm run dev
 
   build:
     desc: Build QuadBoard
     deps: [build-frontend]
     cmds:
-      - templ generate ./...
       - mkdir -p {{.BIN_DIR}}
       - >
         go build
@@ -129,11 +106,14 @@ tasks:
       - test
 
   dev:
-    desc: Run app in development mode (builds unminified frontend)
-    deps: [build-frontend-dev]
+    desc: Run Go backend only (use with dev-frontend in another terminal)
     cmds:
-      - templ generate ./...
       - go run ./cmd/quadboard serve
+
+  dev-frontend:
+    desc: Run Vite dev server (hot reload)
+    cmds:
+      - cd web && npm run dev
 
   docker-build:
     desc: Build the Docker image using BuildKit
