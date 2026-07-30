@@ -1,2 +1,8 @@
-/** @type {import("@sveltejs/vite-plugin-svelte").SvelteConfig} */
-export default {}
+import { vitePreprocess } from '@sveltejs/vite-plugin-svelte'
+
+export default {
+  preprocess: vitePreprocess(),
+  compilerOptions: {
+    discloseVersion: false
+  }
+}
