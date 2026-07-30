@@ -80,7 +80,7 @@ func Run(cmd *cobra.Command, args []string) error {
 		logger.Info("Authentication disabled. All resources will be visible.")
 	}
 
-	router := http.NewRouter(catalog, oidcInstance)
+	router := http.NewRouter(catalog, oidcInstance, &cfg)
 
 	server := http.NewServer(cfg, router)
 

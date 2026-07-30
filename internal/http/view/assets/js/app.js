@@ -111,7 +111,8 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderGroupedView(resources) {
         const groups = {};
         resources.forEach(app => {
-            const groupName = app.Group || 'Default';
+            // Utilisation de DisplayName (géré par le backend)
+            const groupName = app.DisplayName || 'Default';
             if (!groups[groupName]) groups[groupName] = [];
             groups[groupName].push(app);
         });
@@ -141,6 +142,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Fonction utilitaire pour créer une carte
     function createCard(app, groupName) {
+        // Si non autorisé, on crée une carte "désactivée" sans lien réel
+        if (!app.Authorized) {
+            const card = document.createElement('div');
+            card.className = 'card disabled';
+            
+            card.innerHTML = `
+                <div class="card-content">
+                    <div class="card-header">
+                        <div class="card-icon-wrapper">
+                            <i data-lucide="lock" class="card-icon"></i>
+                        </div>
+                        <h3 class="card-title">${app.Name}</h3>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <span class="card-group-badge">${groupName}</span>
+                    <span class="card-no-url">Restricted</span>
+                </div>
+            `;
+            return card;
+        }
+
+        // Sinon, carte normale
         const card = document.createElement('a');
         card.href = app.URL || '#';
         card.target = '_blank';
@@ -171,13 +195,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 ${descriptionHTML}
             </div>
             <div class="card-footer">
-                <span class="card-group-badge" data-group="${groupName}">${groupName}</span>
+                <span class="card-group-badge" data-group="${app.Group || 'Default'}">${groupName}</span>
                 <span class="card-open">${openText}</span>
             </div>
         `;
         return card;
     }
-
+    
     // --- Gestion du clic sur un badge de groupe ---
     // On utilise la délégation d'événements car les cartes sont recréées à chaque rendu
     container.addEventListener('click', (e) => {

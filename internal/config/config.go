@@ -6,6 +6,7 @@ type Config struct {
 	Logging   LoggingConfig   `yaml:"logging"`
 	Providers ProvidersConfig `yaml:"providers"`
 	Auth      AuthConfig      `yaml:"auth"`
+	UI        UIConfig        `yaml:"ui"`
 }
 
 type ServerConfig struct {
@@ -24,8 +25,7 @@ type ProvidersConfig struct {
 }
 
 type QuadletConfig struct {
-	Paths      []string `yaml:"paths"`
-	ShowItSelf bool     `yaml:"show_self"` // show it self
+	Paths []string `yaml:"paths"`
 }
 
 type AuthConfig struct {
@@ -38,4 +38,11 @@ type OIDCConfig struct {
 	Issuer       string `yaml:"issuer"`
 	ClientID     string `yaml:"client_id"`
 	ClientSecret string `yaml:"client_secret"`
+}
+
+type UIConfig struct {
+	HideUnauthorizedGroups bool              `yaml:"hide_unauthorized_groups"`
+	GroupLabels            map[string]string `yaml:"group_labels"`
+	ShowItSelf             bool              `yaml:"show_self"` // show it self
+
 }

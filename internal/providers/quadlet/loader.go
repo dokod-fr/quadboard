@@ -58,7 +58,7 @@ func loadEntry(model *Model, path string, d fs.DirEntry) error {
 	if info.Mode()&os.ModeSymlink != 0 {
 		resolvedPath, err := filepath.EvalSymlinks(path)
 		if err != nil {
-			slog.Debug("Link seems broken, ignored", slog.String("path", path))
+			slog.Warn("Link seems broken, ignored", slog.String("path", path))
 			return nil
 		}
 		resolvedInfo, err := os.Stat(resolvedPath)
@@ -74,26 +74,26 @@ func loadEntry(model *Model, path string, d fs.DirEntry) error {
 
 	ext := strings.ToLower(filepath.Ext(path))
 	baseName := filepath.Base(path)
-
+	name := strings.TrimSuffix(baseName, ext)
 	switch ext {
 	case ".pod":
-		slog.Debug("Pod detected", slog.String("path", path))
+		slog.Info("Pod detected", slog.String("name", name), slog.String("path", path))
 		model.Pods = append(model.Pods, Pod{
-			Name: strings.TrimSuffix(baseName, ext),
+			Name: name,
 			Path: path,
 		})
 
 	case ".container":
-		slog.Debug("Container detected", slog.String("path", path))
+		slog.Info("Container detected", slog.String("name", name), slog.String("path", path))
 		model.Containers = append(model.Containers, Container{
-			Name: strings.TrimSuffix(baseName, ext),
+			Name: name,
 			Path: path,
 		})
 
 	case ".volume":
-		slog.Debug("Volume detected", slog.String("path", path))
+		slog.Info("Volume detected", slog.String("name", name), slog.String("path", path))
 		model.Volumes = append(model.Volumes, Volume{
-			Name: strings.TrimSuffix(baseName, ext),
+			Name: name,
 			Path: path,
 		})
 	}

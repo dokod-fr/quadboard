@@ -87,8 +87,13 @@ All environment variables start with the QUADBOARD_ prefix.
 | QUADBOARD_AUTH_OIDC_CLIENT_SECRET	 | The Client Secret configured in your OIDC provider. |	(Empty) |
 | QUADBOARD_AUTH_SECURE | Set to false to allow session cookies over plain HTTP (for local dev only). | true |
 
+### UI Configuration
 
-> Note: If QUADBOARD_AUTH_OIDC_ISSUER is not set, authentication is completely disabled and all resources are visible.
+| Variable                      | Description               | Default                |
+|-------------------------------|---------------------------|------------------------|	
+| `QUADBOARD_UI_SHOW_ITSELF` | Set to `true` to display the QuadBoard container in the dashboard. | `false` |
+| `QUADBOARD_UI_HIDE_UNAUTHORIZED_GROUPS` | Set to `true` to completely hide services the user is not authorized to access (otherwise they are greyed out). | `false` |
+| `QUADBOARD_UI_GROUP_LABELS` | Comma-separated key-value pairs to map technical OIDC groups to display names (e.g., `security:Security,infra:Infra`). | *(Empty)* |
 
 ## Docker Configuration
 

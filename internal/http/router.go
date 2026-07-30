@@ -6,13 +6,14 @@ import (
 
 	"github.com/dokod-fr/quadboard/internal/app"
 	"github.com/dokod-fr/quadboard/internal/auth"
+	"github.com/dokod-fr/quadboard/internal/config"
 	"github.com/dokod-fr/quadboard/internal/http/handlers"
 	"github.com/dokod-fr/quadboard/internal/http/middleware"
 	"github.com/dokod-fr/quadboard/internal/http/view"
 	"github.com/go-chi/chi/v5"
 )
 
-func NewRouter(catalog *app.Catalog, oidc *auth.OIDC) http.Handler {
+func NewRouter(catalog *app.Catalog, oidc *auth.OIDC, config *config.Config) http.Handler {
 	r := chi.NewRouter()
 
 	// --- Public routes ---
@@ -32,7 +33,7 @@ func NewRouter(catalog *app.Catalog, oidc *auth.OIDC) http.Handler {
 	)
 
 	// --- API routes ---
-	catalogHandler := handlers.NewCatalogHandler(catalog)
+	catalogHandler := handlers.NewCatalogHandler(catalog, config)
 
 	r.Route("/api/v1", func(r chi.Router) {
 		r.Get("/catalog", catalogHandler.Serve)

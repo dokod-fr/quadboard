@@ -36,9 +36,14 @@ Specifies a direct URL to an image (PNG, SVG, etc.) to use as the card's logo.
 *   **Example:** `Label="quadboard.logo=https://raw.githubusercontent.com/amir20/dozzle/master/assets/logo.svg"`
 
 ### `quadboard.group`
-Defines the category under which the service will be grouped in the dashboard.
-*   **If omitted:** The service will be placed in the "Default" group.
-*   **Example:** `Label="quadboard.group=Infrastructure"`
+Defines the security group and category under which the service will be displayed.
+
+When OIDC authentication is enabled, this value must match the group name declared in your identity provider (e.g., Authelia, Authentik). QuadBoard uses this to grant or restrict access to the service based on the user's groups.
+
+If you want to display a cleaner, human-readable name on the dashboard instead of the raw technical group name, you can map it using the group_labels setting in your UI configuration.
+
+* If omitted: The service is considered public (if auth is enabled) and placed in the "Default" visual group.
+* Example: `Label="quadboard.group=security"` (If mapped in config, it will display as "Security & Access" on the dashboard).
 
 ## Example Quadlet
 

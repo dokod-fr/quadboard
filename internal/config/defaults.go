@@ -17,14 +17,18 @@ func defaultConfig() Config {
 		},
 		Providers: ProvidersConfig{
 			Quadlet: QuadletConfig{
-				Paths:      quadletPaths,
-				ShowItSelf: false, // Default, no show quadboard
+				Paths: quadletPaths,
 			},
 		},
 		Auth: AuthConfig{
 			SecretKey: "",
 			Secure:    true, // Default to true for security; can be overridden for testing purposes
 			OIDC:      nil,
+		},
+		UI: UIConfig{
+			ShowItSelf:             false, // Default, no show quadboard
+			GroupLabels:            map[string]string{},
+			HideUnauthorizedGroups: false, // Default, show unauthorized group desactived
 		},
 	}
 }

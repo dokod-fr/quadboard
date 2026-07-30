@@ -90,12 +90,34 @@ func applyEnvVars(cfg *Config) {
 		cfg.Providers.Quadlet.Paths = paths
 	}
 
-	if val, ok := os.LookupEnv("QUADBOARD_QUADLET_SHOW_ITSELF"); ok {
+	// --- UI --- //
+	if val, ok := os.LookupEnv("QUADBOARD_UI_SHOW_ITSELF"); ok {
 		if show, err := strconv.ParseBool(val); err == nil {
-			cfg.Providers.Quadlet.ShowItSelf = show
+			cfg.UI.ShowItSelf = show
 		}
 	}
 
+	if val, ok := os.LookupEnv("QUADBOARD_UI_HIDE_UNAUTHORIZED_GROUPS"); ok {
+		cfg.UI.HideUnauthorizedGroups = val == "true" || val == "1"
+	}
+
+	if val, ok := os.LookupEnv("QUADBOARD_UI_GROUP_LABELS"); ok {
+		if cfg.UI.GroupLabels == nil {
+			cfg.UI.GroupLabels = make(map[string]string)
+		}
+		// Expected format: "security:Sécurité,infra:Infrastructure"
+		pairs := strings.Split(val, ",")
+		for _, p := range pairs {
+			kv := strings.SplitN(p, ":", 2)
+			if len(kv) == 2 {
+				key := strings.TrimSpace(kv[0])
+				value := strings.TrimSpace(kv[1])
+				cfg.UI.GroupLabels[key] = value
+			}
+		}
+	}
+
+	// ----- AUTH ----- //
 	if val, ok := os.LookupEnv("QUADBOARD_AUTH_SECRET_KEY"); ok {
 		cfg.Auth.SecretKey = val
 	}
