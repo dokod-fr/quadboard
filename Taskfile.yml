@@ -44,14 +44,14 @@ tasks:
     deps: [tools:esbuild]
     cmds:
       - "{{.ESBUILD_BIN}} {{.JS_SRC}} --bundle --minify --format=iife --outfile={{.JS_MIN}}"
-      - "{{.ESBUILD_BIN}} {{.CSS_SRC}} --minify --outfile={{.CSS_MIN}}"
+      - "{{.ESBUILD_BIN}} {{.CSS_SRC}} --bundle --minify --outfile={{.CSS_MIN}}"
 
   build-frontend-dev:
     desc: Bundle JS and CSS for development (no minification)
     deps: [tools:esbuild]
     cmds:
       - "{{.ESBUILD_BIN}} {{.JS_SRC}} --bundle --format=iife --outfile={{.JS_MIN}}"
-      - "{{.ESBUILD_BIN}} {{.CSS_SRC}} --outfile={{.CSS_MIN}}"
+      - "{{.ESBUILD_BIN}} {{.CSS_SRC}} --bundle --outfile={{.CSS_MIN}}"
 
   build:
     desc: Build QuadBoard
