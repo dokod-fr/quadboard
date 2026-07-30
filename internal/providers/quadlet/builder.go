@@ -2,17 +2,24 @@ package quadlet
 
 import (
 	"fmt"
-	"log/slog"
+	"net/http"
 	"regexp"
 	"sort"
 	"strings"
+	"sync"
+	"time"
 
 	"github.com/dokod-fr/quadboard/internal/config"
 	"github.com/dokod-fr/quadboard/internal/domain"
 )
 
-// traefikHostRegex extracts the domain from a Traefik rule: Host(`example.com`)
 var traefikHostRegex = regexp.MustCompile("Host\\(`([^`]+)`\\)")
+
+// --- Logo cache SimpleIcons ---
+var (
+	simpleIconsCache = make(map[string]bool)
+	cacheMutex       sync.Mutex
+)
 
 /*
  * ==== Utility functions =======
@@ -36,11 +43,42 @@ func guessLogoFromImage(image string) string {
 	baseImage := strings.Split(image, ":")[0]
 	parts := strings.Split(baseImage, "/")
 	appName := parts[len(parts)-1]
+
+	generics := map[string]bool{
+		"server": true, "app": true, "web": true, "api": true,
+		"latest": true, "cli": true, "core": true, "main": true,
+	}
+	if generics[appName] && len(parts) > 1 {
+		appName = parts[len(parts)-2]
+	}
 	appName = strings.ToLower(appName)
 
-	url := fmt.Sprintf("https://cdn.simpleicons.org/%s", appName)
-	slog.Debug("Simple Icons Url", slog.String("url", url))
-	return url
+	cacheMutex.Lock()
+	isValid, exists := simpleIconsCache[appName]
+	cacheMutex.Unlock()
+
+	if !exists {
+		url := fmt.Sprintf("https://cdn.simpleicons.org/%s", appName)
+		client := http.Client{Timeout: 3 * time.Second}
+		resp, err := client.Head(url)
+
+		if err == nil {
+			resp.Body.Close()
+			isValid = resp.StatusCode == http.StatusOK
+		} else {
+			isValid = false
+		}
+
+		cacheMutex.Lock()
+		simpleIconsCache[appName] = isValid
+		cacheMutex.Unlock()
+	}
+
+	if isValid {
+		return fmt.Sprintf("https://cdn.simpleicons.org/%s", appName)
+	}
+
+	return ""
 }
 
 /* ======= End utility functions ======== */

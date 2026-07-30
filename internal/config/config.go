@@ -44,5 +44,5 @@ type UIConfig struct {
 	HideUnauthorizedGroups bool              `yaml:"hide_unauthorized_groups"`
 	GroupLabels            map[string]string `yaml:"group_labels"`
 	ShowItSelf             bool              `yaml:"show_self"` // show it self
-
+	GroupByDefault         bool              `yaml:"group_by_default"`
 }

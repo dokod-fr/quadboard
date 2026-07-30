@@ -29,6 +29,7 @@ func defaultConfig() Config {
 			ShowItSelf:             false, // Default, no show quadboard
 			GroupLabels:            map[string]string{},
 			HideUnauthorizedGroups: false, // Default, show unauthorized group desactived
+			GroupByDefault:         false, // Default, show flate view
 		},
 	}
 }

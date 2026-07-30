@@ -44,7 +44,7 @@ func NewRouter(catalog *app.Catalog, oidc *auth.OIDC, config *config.Config) htt
 	})
 
 	// --- Protected routes ---
-	homeHandler := handlers.NewHomeHandler(catalog)
+	homeHandler := handlers.NewHomeHandler(catalog, config)
 
 	if oidc != nil {
 		// This route is only used for OIDC login and callback, so we don't need to protect it with the AuthMiddleware

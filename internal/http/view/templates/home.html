@@ -1,42 +1,9 @@
 {{define "content"}}
 <div id="resource-container">
-    {{range .Groups}}
-    <section class="resource-group" data-group-name="{{.Name}}">
-        <h2 class="group-title">{{.Name}}</h2>
-        <div class="card-grid">
-            {{range .Resources}}
-            <a href="{{if .URL}}{{.URL}}{{else}}#{{end}}" target="_blank" rel="noopener noreferrer" class="card {{if not .URL}}disabled{{end}}">
-                <div class="card-content">
-                    <div class="card-header">
-                        <div class="card-icon-wrapper">
-                            {{if .Logo}}
-                            <img src="{{.Logo}}" alt="{{.Name}}" class="card-logo">
-                            {{else}}
-                            <i data-lucide="{{if .Icon}}{{.Icon}}{{else}}box{{end}}" class="card-icon"></i>
-                            {{end}}
-                        </div>
-                        <h3 class="card-title">{{.Name}}</h3>
-                    </div>
-                    {{if .Description}}
-                    <p class="card-desc">{{.Description}}</p>
-                    {{end}}
-                </div>
-                <div class="card-footer">
-                    {{if .URL}}
-                    <span class="card-open">Open <i data-lucide="external-link"></i></span>
-                    {{else}}
-                    <span class="card-no-url">No URL</span>
-                    {{end}}
-                </div>
-            </a>
-            {{end}}
-        </div>
-    </section>
-    {{else}}
+    <!-- Le JavaScript (app.js) injectera le catalogue ici -->
     <div class="empty-state">
-        <i data-lucide="search-x"></i>
-        <p>No services discovered.</p>
+        <i data-lucide="loader-2"></i>
+        <p>Chargement du catalogue...</p>
     </div>
-    {{end}}
 </div>
 {{end}}

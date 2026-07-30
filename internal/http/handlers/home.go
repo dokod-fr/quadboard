@@ -9,6 +9,7 @@ import (
 
 	"github.com/dokod-fr/quadboard/internal/app"
 	"github.com/dokod-fr/quadboard/internal/auth"
+	"github.com/dokod-fr/quadboard/internal/config"
 	"github.com/dokod-fr/quadboard/internal/domain"
 	"github.com/dokod-fr/quadboard/internal/http/view"
 )
@@ -22,9 +23,10 @@ type ResourceGroup struct {
 type HomeHandler struct {
 	catalog *app.Catalog
 	tmpl    *template.Template
+	config  *config.Config
 }
 
-func NewHomeHandler(catalog *app.Catalog) *HomeHandler {
+func NewHomeHandler(catalog *app.Catalog, config *config.Config) *HomeHandler {
 	tmpl := template.Must(
 		template.ParseFS(view.FS(),
 			"templates/layout.html",
@@ -35,6 +37,7 @@ func NewHomeHandler(catalog *app.Catalog) *HomeHandler {
 	return &HomeHandler{
 		catalog: catalog,
 		tmpl:    tmpl,
+		config:  config,
 	}
 }
 
@@ -72,11 +75,11 @@ func (h *HomeHandler) Serve(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := struct {
-		Groups   []ResourceGroup
-		Username string
+		Username       string
+		GroupByDefault bool
 	}{
-		Groups:   viewGroups,
-		Username: username,
+		Username:       username,
+		GroupByDefault: h.config.UI.GroupByDefault,
 	}
 
 	// Buffering

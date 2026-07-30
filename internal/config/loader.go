@@ -98,7 +98,9 @@ func applyEnvVars(cfg *Config) {
 	}
 
 	if val, ok := os.LookupEnv("QUADBOARD_UI_HIDE_UNAUTHORIZED_GROUPS"); ok {
-		cfg.UI.HideUnauthorizedGroups = val == "true" || val == "1"
+		if hide, err := strconv.ParseBool(val); err == nil {
+			cfg.UI.HideUnauthorizedGroups = hide
+		}
 	}
 
 	if val, ok := os.LookupEnv("QUADBOARD_UI_GROUP_LABELS"); ok {
@@ -114,6 +116,12 @@ func applyEnvVars(cfg *Config) {
 				value := strings.TrimSpace(kv[1])
 				cfg.UI.GroupLabels[key] = value
 			}
+		}
+	}
+
+	if val, ok := os.LookupEnv("QUADBOARD_UI_GROUP_BY_DEFAULT"); ok {
+		if b, err := strconv.ParseBool(val); err == nil {
+			cfg.UI.GroupByDefault = b
 		}
 	}
 

@@ -2,14 +2,23 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Theme ---
     const themeToggle = document.getElementById('theme-toggle');
     const htmlElement = document.documentElement;
+    const favicon = document.getElementById('favicon');
+
+    function applyTheme(theme) {
+        htmlElement.setAttribute('data-theme', theme);
+        if (favicon) {
+            favicon.href = theme === 'dark' ? '/assets/img/quadboard-bw.svg' : '/assets/img/quadboard-color.svg';
+        }
+    }
+
     const savedTheme = localStorage.getItem('quadboard-theme') || 'light';
-    htmlElement.setAttribute('data-theme', savedTheme);
+    applyTheme(savedTheme);
 
     if (themeToggle) {
         themeToggle.addEventListener('click', () => {
             const currentTheme = htmlElement.getAttribute('data-theme');
             const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-            htmlElement.setAttribute('data-theme', newTheme);
+            applyTheme(newTheme);
             localStorage.setItem('quadboard-theme', newTheme);
         });
     }
@@ -20,6 +29,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (!container) return;
 
+    // Lecture de la config initiale depuis le HTML
+    const groupByDefault = document.body.dataset.groupByDefault === 'true';
+    
+    let isGrouped = groupByDefault; 
+    let activeGroupFilter = null;
+    let allResources = [];
+
+    const groupToggle = document.getElementById('group-toggle');
+    if (groupToggle) {
+        groupToggle.classList.toggle('active', isGrouped);
+        groupToggle.addEventListener('click', () => {
+            isGrouped = !isGrouped;
+            groupToggle.classList.toggle('active', isGrouped);
+            renderResources(allResources);
+        });
+    }
+
+    // Affichage immédiat des skeletons pendant le fetch
     renderSkeletons();
 
     fetch('/api/v1/catalog')
@@ -27,9 +54,12 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!response.ok) throw new Error('Network response was not ok');
             return response.json();
         })
-        .then(resources => { renderResources(resources); })
+        .then(resources => {
+            allResources = resources;
+            renderResources(allResources);
+        })
         .catch(err => {
-            container.innerHTML = `<div class="empty-state"><i data-lucide="alert-circle"></i><p>Erreur lors du chargement des applications : ${err.message}</p></div>`;
+            container.innerHTML = `<div class="empty-state"><i data-lucide="alert-circle"></i><p>Erreur lors du chargement : ${err.message}</p></div>`;
             if (window.lucide) window.lucide.createIcons();
         });
 
@@ -56,37 +86,18 @@ document.addEventListener('DOMContentLoaded', () => {
         container.appendChild(grid);
     }
 
-    // Variables d'état globales pour le rendu
-    let isGrouped = true;
-    let activeGroupFilter = null;
-    let allResources = []; // On stocke les ressources pour pouvoir les re-filtrer
-
-    // --- Gestion du bouton Groupé / Non Groupé ---
-    const groupToggle = document.getElementById('group-toggle');
-    if (groupToggle) {
-        groupToggle.addEventListener('click', () => {
-            isGrouped = !isGrouped;
-            groupToggle.classList.toggle('active', isGrouped);
-            renderResources(allResources);
-        });
-    }
-
-    // --- Rendu principal ---
     function renderResources(resources) {
         container.innerHTML = '';
-
         if (resources.length === 0) {
             container.innerHTML = `<div class="empty-state"><i data-lucide="search-x"></i><p>Aucune application découverte pour le moment.</p></div>`;
             if (window.lucide) window.lucide.createIcons();
             return;
         }
 
-        // Si un filtre de groupe est actif, on filtre les ressources
         let resourcesToRender = resources;
         if (activeGroupFilter) {
             resourcesToRender = resources.filter(app => (app.Group || 'Default') === activeGroupFilter);
             
-            // Afficher le bandeau de filtre
             const banner = document.createElement('div');
             banner.className = 'filter-banner';
             banner.innerHTML = `
@@ -111,8 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderGroupedView(resources) {
         const groups = {};
         resources.forEach(app => {
-            // Utilisation de DisplayName (géré par le backend)
-            const groupName = app.DisplayName || 'Default';
+            const groupName = app.DisplayName || app.Group || 'Default';
             if (!groups[groupName]) groups[groupName] = [];
             groups[groupName].push(app);
         });
@@ -135,29 +145,25 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderFlatView(resources) {
         const grid = document.createElement('div');
         grid.className = 'card-grid';
-        resources.forEach(app => grid.appendChild(createCard(app, app.Group || 'Default')));
+        resources.forEach(app => grid.appendChild(createCard(app, app.DisplayName || app.Group || 'Default')));
         container.appendChild(grid);
         if (window.lucide) window.lucide.createIcons();
     }
 
-    // Fonction utilitaire pour créer une carte
     function createCard(app, groupName) {
         // Si non autorisé, on crée une carte "désactivée" sans lien réel
         if (!app.Authorized) {
             const card = document.createElement('div');
             card.className = 'card disabled';
-            
             card.innerHTML = `
                 <div class="card-content">
                     <div class="card-header">
-                        <div class="card-icon-wrapper">
-                            <i data-lucide="lock" class="card-icon"></i>
-                        </div>
+                        <div class="card-icon-wrapper"><i data-lucide="lock" class="card-icon"></i></div>
                         <h3 class="card-title">${app.Name}</h3>
                     </div>
                 </div>
                 <div class="card-footer">
-                    <span class="card-group-badge">${groupName}</span>
+                    <span class="card-group-badge" data-group="${app.Group || 'Default'}">${groupName}</span>
                     <span class="card-no-url">Restricted</span>
                 </div>
             `;
@@ -201,36 +207,17 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
         return card;
     }
-    
-    // --- Gestion du clic sur un badge de groupe ---
-    // On utilise la délégation d'événements car les cartes sont recréées à chaque rendu
+
+    // Gestion du clic sur un badge de groupe
     container.addEventListener('click', (e) => {
-        // Si on clique sur l'étiquette du groupe
         if (e.target.classList.contains('card-group-badge')) {
-            e.preventDefault(); // Empêche le lien de la carte de s'ouvrir
+            e.preventDefault();
             activeGroupFilter = e.target.dataset.group;
             renderResources(allResources);
         }
     });
 
-    // --- Mise à jour du fetch initial ---
-    // (Remplace ton ancien fetch par celui-ci pour stocker allResources)
-    fetch('/api/v1/catalog')
-        .then(response => {
-            if (!response.ok) throw new Error('Network response was not ok');
-            return response.json();
-        })
-        .then(resources => {
-            allResources = resources; // On sauvegarde les données
-            renderResources(allResources);
-        })
-        .catch(err => {
-            container.innerHTML = `<div class="empty-state"><i data-lucide="alert-circle"></i><p>Erreur : ${err.message}</p></div>`;
-            if (window.lucide) window.lucide.createIcons();
-        });
-
-    // --- Mise à jour de la recherche ---
-    // On filtre aussi sur les ressources globales
+    // Recherche dynamique
     if (searchInput) {
         searchInput.addEventListener('input', (e) => {
             const searchTerm = e.target.value.toLowerCase();
@@ -239,23 +226,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 return text.includes(searchTerm);
             });
             renderResources(filtered);
-        });
-    }
-
-    if (searchInput) {
-        searchInput.addEventListener('input', (e) => {
-            const searchTerm = e.target.value.toLowerCase();
-            const groups = document.querySelectorAll('.resource-group');
-            groups.forEach(group => {
-                let visibleCards = 0;
-                const cards = group.querySelectorAll('.card');
-                cards.forEach(card => {
-                    const text = card.textContent.toLowerCase();
-                    if (text.includes(searchTerm)) { card.style.display = ''; visibleCards++; } 
-                    else { card.style.display = 'none'; }
-                });
-                group.style.display = visibleCards > 0 ? '' : 'none';
-            });
         });
     }
 });
