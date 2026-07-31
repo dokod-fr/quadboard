@@ -31,7 +31,6 @@ func parsePod(p *Pod) error {
 	p.Name = file.Section("Pod").First("PodName")
 	p.Description = file.Section("Unit").First("Description")
 
-	// La méthode Section retourne une map, on peut accéder directement au tableau de labels
 	p.Labels = parseLabels(file.Section("Pod")["Label"])
 
 	return nil
@@ -56,12 +55,11 @@ func parseContainer(c *Container) error {
 	return nil
 }
 
-// parseLabels convertit un tableau de chaînes "key=value" en map.
-// Gère également le cas où la valeur est entourée de guillemets.
+// Transform array in dic key/value
 func parseLabels(rawLabels []string) map[string]string {
 	labels := make(map[string]string)
 	for _, l := range rawLabels {
-		// On retire les guillemets englobants si présents (ex: Label="key=val")
+		// Got away quote (ex: Label="key=val")
 		l = strings.Trim(l, `"`)
 
 		parts := strings.SplitN(l, "=", 2)
