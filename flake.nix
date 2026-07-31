@@ -21,12 +21,11 @@
             golangci-lint
             gofumpt
 
-            templ
             air
             go-task # Task runner for Go
             cobra-cli # subcommand generator for Go applications
             git
-
+            nodejs_26 # Web front-end
             nil
             nixpkgs-fmt
           ];
@@ -37,7 +36,7 @@
             echo ""
             echo "Go      : $(go version)"
             echo "Task    : $(task --version)"
-            echo "Templ   : $(templ version || true)"
+            echo "Npm     : $(npm --version)"
             echo ""
           '';
         };
