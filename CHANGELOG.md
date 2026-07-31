@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.2.1](https://github.com/dokod-fr/quadboard/compare/v2.2.0...v2.2.1) (2026-07-31)
+
+
+### Bug Fixes
+
+* **config:** Don't block if config file is not OK. Use default instead ([a84ca0c](https://github.com/dokod-fr/quadboard/commit/a84ca0ca7c1ed211b6c71867fe3355476728ef5e))
+* **provider:** Template in link was forgotten ([4a90044](https://github.com/dokod-fr/quadboard/commit/4a9004440f2691e7a056a785be10c8ceae852d5f))
+
 ## [2.2.0](https://github.com/dokod-fr/quadboard/compare/v2.1.0...v2.2.0) (2026-07-31)
 
 
