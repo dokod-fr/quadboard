@@ -1,5 +1,22 @@
 # Changelog
 
+## [2.2.0](https://github.com/dokod-fr/quadboard/compare/v2.1.0...v2.2.0) (2026-07-31)
+
+
+### Features
+
+* **quadlet:** Automatic log discovery based on cdn simpleicons ([2461675](https://github.com/dokod-fr/quadboard/commit/246167599aafa5b45a4c783cb58d020478e0f9ec))
+* **route:** Add groups from session on /me ([c1c51d1](https://github.com/dokod-fr/quadboard/commit/c1c51d1222b99013e2790acc54034226143d9aa5))
+* **ui:** Badge group and group/ungroup filter ([12611db](https://github.com/dokod-fr/quadboard/commit/12611dbc6f562d9297e43b4dda12a1b5e59fbffd))
+* **ui:** Choose grouping default - no grouping by default ([04257f0](https://github.com/dokod-fr/quadboard/commit/04257f0b42667140a121d2188d8ddfe9f8c4555a))
+* **ui:** Group OIDC management, config for group name ([7a5e31b](https://github.com/dokod-fr/quadboard/commit/7a5e31b21d24b2d46ff9247a5117f8f24312faa5))
+* **ui:** Upgrade to framework svelte to improve maintenance ([8055284](https://github.com/dokod-fr/quadboard/commit/80552847fed9b51f24b40fbc2684c8af0a4cc8ca))
+
+
+### Bug Fixes
+
+* **router:** Fallback for API routes if no OIDC ([e263cf9](https://github.com/dokod-fr/quadboard/commit/e263cf9e143d56b75ccc71356512f1adf2c00c90))
+
 ## [2.1.0](https://github.com/dokod-fr/quadboard/compare/v2.0.1...v2.1.0) (2026-07-29)
 
 
