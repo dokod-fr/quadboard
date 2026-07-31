@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"log/slog"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -30,6 +31,7 @@ func Load() (Config, string, error) {
 
 	applyEnvVars(&cfg)
 
+	slog.Debug("Configuration defined", slog.Any("config", cfg))
 	return cfg, configPath, nil
 }
 

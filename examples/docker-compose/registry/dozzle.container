@@ -40,6 +40,7 @@ Label=traefik.http.routers.dozzle.tls=true
 Label=traefik.http.routers.dozzle.tls.certresolver=tlschallenge
 Label=traefik.http.services.dozzle.loadbalancer.server.port=8080
 Label=quadboard.icon=save
+Label=quadboard.group=tools
 
 [Install]
 WantedBy=default.target

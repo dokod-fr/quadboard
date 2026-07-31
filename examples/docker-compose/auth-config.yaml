@@ -12,3 +12,9 @@ auth:
     issuer: "http://domain.local:8080/realms/quadboard"
     client_id: "quadboard"
     client_secret: "super-secret"
+ui:
+  group_labels:
+    tools: "Outils"
+    admins: "Administration"
+    security: "Sécurité"
+    cloud: "Cloud"

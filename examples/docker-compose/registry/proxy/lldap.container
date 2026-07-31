@@ -36,6 +36,7 @@ HealthTimeout=30s
 Label=traefik.enable=true
 Label=traefik.http.routers.lldap.rule="Host(`lldap.example.com`)"
 Label=traefik.http.services.lldap.loadbalancer.server.port=17170
+Label=quadboard.group=admins
 
 # Environment=LLDAP_URL=http://localhost:17170
 # Environment=LLDAP_ADMIN_USERNAME=admin

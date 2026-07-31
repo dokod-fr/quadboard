@@ -7,6 +7,9 @@
   "groups": [
     {
       "name": "admins"
+    },
+    {
+      "name": "tools"
     }
   ],
 
@@ -28,8 +31,7 @@
       ],
 
       "groups": [
-        "/admins"
-      ]
+        "/admins"      ]
     }
   ],
 

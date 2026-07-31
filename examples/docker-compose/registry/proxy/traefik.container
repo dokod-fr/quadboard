@@ -18,6 +18,7 @@ Environment=TZ=Europe/Paris
 
 Label=traefik.http.routers.traefik.entrypoints=websecure
 Label=traefik.http.routers.traefik.middlewares=authelia@docker
+Label=quadboard.group=admins
 
 [Install]
 WantedBy=default.target
